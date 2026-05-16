@@ -185,7 +185,7 @@ const i18n = (() => {
       'dash.stats.games':     'Games played',
       'dash.stats.time':      'Best time',
       'dash.history':         'Round history',
-      'dash.no.history':      'You haven't played yet.',
+      'dash.no.history':      "You haven't played yet.",
 
       'game.setup.title':     'New Route',
       'game.diff.title':      'Map difficulty',
