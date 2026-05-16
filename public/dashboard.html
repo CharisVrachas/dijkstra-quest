@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Αρχική – Dijkstra Quest</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white" id="mainNav"></nav>
+
+  <main class="py-4">
+    <div class="container">
+
+      <!-- Welcome -->
+      <div class="mb-4">
+        <h2><span data-i18n="dash.welcome"></span> <span id="usernameDisplay" class="text-primary"></span>!</h2>
+        <p class="text-muted" data-i18n="dash.subtitle"></p>
+      </div>
+
+      <!-- Stats cards -->
+      <div class="row g-3 mb-4" id="statsRow">
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm text-center p-3">
+            <div class="hud-label" data-i18n="dash.stats.total"></div>
+            <div class="hud-value text-primary" id="statTotal">—</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm text-center p-3">
+            <div class="hud-label" data-i18n="dash.stats.best"></div>
+            <div class="hud-value text-success" id="statBest">—</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm text-center p-3">
+            <div class="hud-label" data-i18n="dash.stats.games"></div>
+            <div class="hud-value text-info" id="statGames">0</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm text-center p-3">
+            <div class="hud-label" data-i18n="dash.stats.time"></div>
+            <div class="hud-value text-warning" id="statTime">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action cards -->
+      <div class="row g-4 mb-5">
+        <div class="col-md-4">
+          <div class="card feature-card p-4 text-center">
+            <div class="feature-icon">🎮</div>
+            <h5 data-i18n="dash.card.play.t"></h5>
+            <p class="text-muted small" data-i18n="dash.card.play.d"></p>
+            <a href="/game.html" class="btn btn-primary" data-i18n="dash.card.play.btn"></a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card p-4 text-center">
+            <div class="feature-icon">📚</div>
+            <h5 data-i18n="dash.card.train.t"></h5>
+            <p class="text-muted small" data-i18n="dash.card.train.d"></p>
+            <a href="/training.html" class="btn btn-outline-primary" data-i18n="dash.card.train.btn"></a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card p-4 text-center">
+            <div class="feature-icon">🏆</div>
+            <h5 data-i18n="dash.card.rank.t"></h5>
+            <p class="text-muted small" data-i18n="dash.card.rank.d"></p>
+            <a href="/leaderboard.html" class="btn btn-outline-warning" data-i18n="dash.card.rank.btn"></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- History -->
+      <h4 class="mb-3" data-i18n="dash.history"></h4>
+      <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>#</th>
+                <th data-i18n="game.diff.title">Δυσκολία</th>
+                <th>n</th>
+                <th>|E|</th>
+                <th data-i18n="game.timer">Χρόνος</th>
+                <th data-i18n="res.points">Πόντοι</th>
+                <th>Ημερομηνία</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr><td colspan="7" class="text-center text-muted py-3"
+                      data-i18n="dash.no.history"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer><div class="container">Dijkstra Quest &copy; 2025</div></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const me = await requireLogin();
+      await buildNav('dashboard');
+      i18n.apply();
+
+      document.getElementById('usernameDisplay').textContent = me.username;
+
+      // Load stats + history
+      const data = await apiGet('/api/scores/mine');
+
+      if (data.summary) {
+        const s = data.summary;
+        document.getElementById('statTotal').textContent = s.total_points ?? 0;
+        document.getElementById('statBest').textContent  = s.best_score  ?? '—';
+        document.getElementById('statGames').textContent = s.games_played ?? 0;
+        document.getElementById('statTime').textContent  =
+          s.best_time != null ? fmtTime(s.best_time) : '—';
+      }
+
+      if (data.scores && data.scores.length) {
+        const tbody = document.getElementById('historyBody');
+        tbody.innerHTML = data.scores.map((sc, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td><span class="badge bg-secondary">${sc.difficulty}</span></td>
+            <td>${sc.graph_n}</td>
+            <td>${sc.graph_edges}</td>
+            <td>${fmtTime(sc.time_seconds)}</td>
+            <td class="fw-bold text-primary">${sc.points}</td>
+            <td class="text-muted small">${new Date(sc.created_at).toLocaleDateString('el-GR')}</td>
+          </tr>`).join('');
+      }
+    });
+  </script>
+</body>
+</html>

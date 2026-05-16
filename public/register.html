@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Εγγραφή – Dijkstra Quest</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white" id="mainNav"></nav>
+
+  <main class="py-4">
+    <div class="container">
+      <div class="card auth-card p-4">
+        <h2 class="text-center mb-4" data-i18n="auth.register.title">Εγγραφή</h2>
+
+        <div id="alertBox" class="alert d-none" role="alert"></div>
+
+        <form id="registerForm" novalidate>
+          <div class="mb-3">
+            <label class="form-label" data-i18n="auth.username">Όνομα χρήστη</label>
+            <input type="text" class="form-control" id="username"
+                   placeholder="π.χ. alexis42" autocomplete="username" required>
+            <div class="form-text">3–30 χαρακτήρες</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" data-i18n="auth.email">Email</label>
+            <input type="email" class="form-control" id="email"
+                   placeholder="example@mail.com" autocomplete="email" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" data-i18n="auth.password">Κωδικός</label>
+            <input type="password" class="form-control" id="password"
+                   placeholder="τουλάχιστον 6 χαρακτήρες"
+                   autocomplete="new-password" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 mb-3"
+                  data-i18n="auth.register.btn">Εγγραφή</button>
+          <div class="text-center">
+            <a href="/login.html" data-i18n="auth.register.link">Σύνδεση</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await redirectIfLoggedIn();
+      await buildNav('');
+      i18n.apply();
+
+      document.getElementById('registerForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const alertBox = document.getElementById('alertBox');
+        alertBox.className = 'alert d-none';
+
+        const username = document.getElementById('username').value.trim();
+        const email    = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (!username || !email || !password) {
+          alertBox.className = 'alert alert-warning';
+          alertBox.textContent = 'Συμπλήρωσε όλα τα πεδία.';
+          return;
+        }
+
+        const res = await apiPost('/api/auth/register', { username, email, password });
+        if (res.success) {
+          window.location.href = '/dashboard.html';
+        } else {
+          alertBox.className = 'alert alert-danger';
+          alertBox.textContent = res.error || i18n.t('error.generic');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

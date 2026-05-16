@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Εκπαίδευση – Dijkstra Quest</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white" id="mainNav"></nav>
+
+  <!-- Training banner -->
+  <div class="bg-warning bg-opacity-25 border-bottom py-2 text-center">
+    <span class="fw-bold" data-i18n="train.title">Λειτουργία Εκπαίδευσης</span>
+    &mdash;
+    <span class="text-muted small" data-i18n="train.sub"></span>
+  </div>
+
+  <!-- ══ SETUP PHASE ══ -->
+  <main id="setupPhase" class="py-4">
+    <div class="container" style="max-width:760px">
+      <div class="alert alert-info" data-i18n="train.hint"></div>
+      <h3 class="mb-4 fw-bold" data-i18n="game.setup.title">Στήσε τον γύρο</h3>
+
+      <div class="mb-4">
+        <div class="hud-label mb-2" data-i18n="game.diff.title">Επίπεδο δυσκολίας</div>
+        <div class="d-flex flex-wrap gap-2" id="diffPills">
+          <span class="badge bg-success diff-badge fs-6 px-3 py-2 active"
+                data-diff="beginner" data-i18n="game.diff.beginner">Αρχάριος</span>
+          <span class="badge bg-primary diff-badge fs-6 px-3 py-2"
+                data-diff="normal"   data-i18n="game.diff.normal">Κανονικό</span>
+          <span class="badge bg-danger diff-badge fs-6 px-3 py-2"
+                data-diff="advanced" data-i18n="game.diff.advanced">Προχωρημένο</span>
+          <span class="badge bg-secondary diff-badge fs-6 px-3 py-2"
+                data-diff="custom"   data-i18n="game.diff.custom">Προσαρμοσμένο</span>
+        </div>
+      </div>
+
+      <div id="customParams" class="card border-0 bg-light p-3 mb-4 d-none">
+        <div class="row g-3">
+          <div class="col-6 col-md-3">
+            <label class="form-label small" data-i18n="game.param.n">n</label>
+            <input type="number" class="form-control form-control-sm" id="paramN"
+                   min="4" max="15" value="6">
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="form-label small" data-i18n="game.param.p">p</label>
+            <input type="number" class="form-control form-control-sm" id="paramP"
+                   min="0.1" max="0.95" step="0.05" value="0.5">
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="form-label small" data-i18n="game.param.wmin">Ελάχ.</label>
+            <input type="number" class="form-control form-control-sm" id="paramWMin"
+                   min="1" max="50" value="1">
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="form-label small" data-i18n="game.param.wmax">Μέγ.</label>
+            <input type="number" class="form-control form-control-sm" id="paramWMax"
+                   min="1" max="100" value="20">
+          </div>
+        </div>
+      </div>
+
+      <button id="generateBtn" class="btn btn-warning btn-lg" data-i18n="game.generate.btn">
+        Δημιουργία γραφήματος
+      </button>
+    </div>
+  </main>
+
+  <!-- ══ PLAY PHASE ══ -->
+  <div id="playPhase" class="d-none">
+    <div id="gameWrapper">
+      <div id="setupPanel">
+        <div class="alert alert-warning py-2 small mb-3">
+          📚 <span data-i18n="train.title">Εκπαίδευση</span> — χωρίς χρονόμετρο
+        </div>
+        <div class="mb-3">
+          <div class="hud-label" data-i18n="game.source">Αφετηρία</div>
+          <span id="srcBadge" class="hud-node hud-source">—</span>
+        </div>
+        <div class="mb-3">
+          <div class="hud-label" data-i18n="game.dest">Προορισμός</div>
+          <span id="dstBadge" class="hud-node hud-dest">—</span>
+        </div>
+        <hr>
+        <div class="mb-3 text-center">
+          <div class="hud-label" data-i18n="game.weight">Βάρος</div>
+          <div class="hud-value" id="weightSum">0</div>
+        </div>
+        <div class="alert alert-info py-2 small" data-i18n="game.hint"></div>
+        <hr>
+        <div class="d-grid gap-2">
+          <button id="submitBtn"  class="btn btn-warning" data-i18n="game.submit.btn">Υποβολή</button>
+          <button id="resetBtn"   class="btn btn-outline-secondary btn-sm" data-i18n="game.reset.btn">Επαναφορά</button>
+          <button id="newGameBtn" class="btn btn-outline-dark btn-sm" data-i18n="res.new.btn">Νέος γύρος</button>
+        </div>
+      </div>
+
+      <div id="graphPanel">
+        <div id="cy"></div>
+        <div class="card border-0 shadow-sm p-2">
+          <div class="hud-label mb-1" data-i18n="game.edges.sel">Επιλεγμένες ακμές</div>
+          <div id="edgeList"><span class="text-muted small">—</span></div>
+        </div>
+      </div>
+
+      <div id="hudPanel">
+        <div id="resultPanel" class="d-none">
+          <div id="resultMsg" class="fw-bold mb-2"></div>
+          <div class="mb-2">
+            <span class="hud-label" data-i18n="res.sp.weight"></span>
+            <span class="fw-bold" id="spWeight">—</span>
+          </div>
+          <div class="mb-3">
+            <span class="hud-label" data-i18n="res.sp.path"></span>
+            <div id="spNodes" class="mt-1"></div>
+          </div>
+          <button id="replayBtn" class="btn btn-outline-secondary btn-sm mb-2 w-100"
+                  data-i18n="res.replay.btn">Ξανά αυτό</button>
+        </div>
+        <div id="dijkBtnWrap" class="d-none mt-2">
+          <button class="btn btn-outline-info w-100" id="openDijkBtn"
+                  data-bs-toggle="modal" data-bs-target="#dijkModal"
+                  data-i18n="game.dijkstra.btn">Δες λύση Dijkstra</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dijkstra modal (identical to game.html) -->
+  <div class="modal fade" id="dijkModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" data-i18n="dijk.modal.title">Βήμα-βήμα Dijkstra</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div>
+            <div id="dijkCy"></div>
+            <div class="progress mt-2" style="height:6px">
+              <div id="stepProgress" class="progress-bar" role="progressbar" style="width:0%"></div>
+            </div>
+            <div class="text-center mt-1 small text-muted">
+              <span data-i18n="dijk.step">Βήμα</span>
+              <span id="stepCur">0</span>
+              <span data-i18n="dijk.of">από</span>
+              <span id="stepTotal">0</span>
+            </div>
+          </div>
+          <div>
+            <div class="alert alert-secondary py-2 mb-3" id="stepDesc">—</div>
+            <div class="hud-label mb-1" data-i18n="dijk.dist.table">Πίνακας αποστάσεων</div>
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered" id="distTable">
+                <thead class="table-light">
+                  <tr><th>Κορυφή</th><th>d(v)</th><th>Προηγ.</th></tr>
+                </thead>
+                <tbody id="distBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer flex-wrap gap-2">
+          <button class="btn btn-secondary btn-sm" id="dijkPrevBtn" data-i18n="dijk.prev.btn">Προηγούμενο</button>
+          <button class="btn btn-primary btn-sm"   id="dijkNextBtn" data-i18n="dijk.next.btn">Επόμενο βήμα</button>
+          <button class="btn btn-success btn-sm"   id="dijkAutoBtn" data-i18n="dijk.auto.btn">Αυτόματο</button>
+          <button class="btn btn-warning btn-sm d-none" id="dijkStopBtn" data-i18n="dijk.stop.btn">Παύση</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm ms-auto"
+                  data-bs-dismiss="modal">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer><div class="container">Dijkstra Quest &copy; 2025</div></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    window.TRAINING_MODE = true;   // flag read by game.js
+  </script>
+  <script src="js/game.js"></script>
+</body>
+</html>

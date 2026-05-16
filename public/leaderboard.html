@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Κατάταξη – Dijkstra Quest</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-white" id="mainNav"></nav>
+
+  <main class="py-5">
+    <div class="container" style="max-width:700px">
+      <h2 class="text-center mb-4 fw-bold" data-i18n="lb.title">
+        Παγκόσμια Κατάταξη — Top 10
+      </h2>
+
+      <div class="card border-0 shadow">
+        <div class="table-responsive">
+          <table class="table lb-table mb-0">
+            <thead>
+              <tr>
+                <th data-i18n="lb.rank">#</th>
+                <th data-i18n="lb.player">Παίκτης</th>
+                <th data-i18n="lb.total">Σύνολο πόντων</th>
+                <th data-i18n="lb.best">Καλύτερος γύρος</th>
+                <th data-i18n="lb.games">Παιχνίδια</th>
+              </tr>
+            </thead>
+            <tbody id="lbBody">
+              <tr>
+                <td colspan="5" class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading…</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="/game.html" class="btn btn-primary me-2" data-i18n="dash.card.play.btn">Παίξε</a>
+        <a href="/dashboard.html" class="btn btn-outline-secondary" data-i18n="nav.dashboard">Αρχική</a>
+      </div>
+    </div>
+  </main>
+
+  <footer><div class="container">Dijkstra Quest &copy; 2025</div></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    const MEDAL = ['🥇','🥈','🥉'];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await buildNav('leaderboard');
+      i18n.apply();
+
+      const data = await apiGet('/api/scores/leaderboard');
+      const tbody = document.getElementById('lbBody');
+
+      if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4"
+                              data-i18n="lb.empty">${i18n.t('lb.empty')}</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = data.map((row, i) => {
+        const rankClass = i === 0 ? 'lb-rank-1' : i === 1 ? 'lb-rank-2' : i === 2 ? 'lb-rank-3' : '';
+        return `
+          <tr class="${rankClass}">
+            <td class="fw-bold">${MEDAL[i] || (i + 1)}</td>
+            <td>${escapeHtml(row.username)}</td>
+            <td class="fw-bold text-primary">${row.total_points}</td>
+            <td>${row.best_score}</td>
+            <td>${row.games_played}</td>
+          </tr>`;
+      }).join('');
+    });
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c =>
+        ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+  </script>
+</body>
+</html>
