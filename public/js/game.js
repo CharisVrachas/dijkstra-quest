@@ -353,7 +353,9 @@ function showResult(res) {
   panel.classList.remove('d-none', 'result-correct', 'result-wrong');
   panel.classList.add(res.correct ? 'result-correct' : 'result-wrong');
 
-  msg.textContent = i18n.t(res.correct ? 'res.correct' : 'res.wrong');
+  const msgKey = res.correct ? 'res.correct' : 'res.wrong';
+  msg.dataset.i18n = msgKey;
+  msg.textContent  = i18n.t(msgKey);
 
   // Points (not in training)
   const pointsRow = document.getElementById('pointsRow');
