@@ -146,6 +146,8 @@ const i18n = (() => {
       'train.hint':           '💡 Συμβουλή: μετά την υποβολή μπορείς να δεις βήμα-βήμα πώς η GPS βρίσκει τη διαδρομή.',
 
       // Common
+      'footer.uni':           'CEID, Πανεπιστήμιο Πατρών',
+
       'loading':              'Φόρτωση…',
       'error.generic':        'Κάτι πήγε λάθος. Δοκίμασε ξανά.',
       'sec':                  'δευτ.',
@@ -277,6 +279,8 @@ const i18n = (() => {
       'train.title':          'Training Mode',
       'train.sub':            'Explore city maps without time pressure or scoring.',
       'train.hint':           '💡 Tip: after submitting you can watch GPS (Dijkstra) find the shortest route step by step.',
+
+      'footer.uni':           'CEID, University of Patras',
 
       'loading':              'Loading…',
       'error.generic':        'Something went wrong. Please try again.',
