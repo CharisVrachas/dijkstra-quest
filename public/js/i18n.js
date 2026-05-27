@@ -17,7 +17,7 @@ const i18n = (() => {
       'nav.dashboard':    'Αρχική',
       'nav.play':         'Αγώνας',
       'nav.training':     'Εκπαίδευση',
-      'nav.leaderboard':  'Κατάταξη',
+      'nav.leaderboard':  'Βαθμολογία',
       'nav.lang':         'EN',
 
       // Landing
@@ -55,9 +55,9 @@ const i18n = (() => {
       'dash.card.train.t':    'Εκπαίδευση',
       'dash.card.train.d':    'Εξερεύνησε χάρτες και τον αλγόριθμο GPS χωρίς χρονόμετρο και πόντους.',
       'dash.card.train.btn':  'Εκπαίδευση',
-      'dash.card.rank.t':     'Κατάταξη',
+      'dash.card.rank.t':     'Βαθμολογία',
       'dash.card.rank.d':     'Δες τους top-10 παίκτες και τους προσωπικούς σου πόντους.',
-      'dash.card.rank.btn':   'Κατάταξη',
+      'dash.card.rank.btn':   'Βαθμολογία',
       'dash.stats.total':     'Σύνολο πόντων',
       'dash.stats.best':      'Καλύτερος γύρος',
       'dash.stats.games':     'Παιχνίδια',
@@ -120,7 +120,7 @@ const i18n = (() => {
       'dijk.desc':            'Περιγραφή',
 
       // Leaderboard
-      'lb.title':             'Κατάταξη Παικτών — Top 10',
+      'lb.title':             'Βαθμολογία — Top 10',
       'lb.rank':              '#',
       'lb.player':            'Παίκτης',
       'lb.total':             'Σύνολο πόντων',
@@ -147,7 +147,7 @@ const i18n = (() => {
       'nav.dashboard':    'Home',
       'nav.play':         'Race',
       'nav.training':     'Training',
-      'nav.leaderboard':  'Leaderboard',
+      'nav.leaderboard':  'Scores',
       'nav.lang':         'ΕΛ',
 
       'home.hero.title':      'Dijkstra Quest',
@@ -182,9 +182,9 @@ const i18n = (() => {
       'dash.card.train.t':    'Training',
       'dash.card.train.d':    'Explore city maps and the GPS algorithm — no timer, no scoring.',
       'dash.card.train.btn':  'Train',
-      'dash.card.rank.t':     'Leaderboard',
+      'dash.card.rank.t':     'Scores',
       'dash.card.rank.d':     'See the top-10 players and your personal stats.',
-      'dash.card.rank.btn':   'Leaderboard',
+      'dash.card.rank.btn':   'Scores',
       'dash.stats.total':     'Total points',
       'dash.stats.best':      'Best round',
       'dash.stats.games':     'Games played',
@@ -242,7 +242,7 @@ const i18n = (() => {
       'dijk.dist.table':      'Distance table (km)',
       'dijk.desc':            'Description',
 
-      'lb.title':             'Player Leaderboard — Top 10',
+      'lb.title':             'Scores — Top 10',
       'lb.rank':              '#',
       'lb.player':            'Player',
       'lb.total':             'Total points',
