@@ -76,6 +76,7 @@ const i18n = (() => {
       'dash.stats.time':      'Καλύτερος χρόνος',
       'dash.history':         'Ιστορικό γύρων',
       'dash.no.history':      'Δεν έχεις παίξει ακόμα.',
+      'dash.date':            'Ημερομηνία',
 
       // Game setup
       'game.setup.title':     'Νέος Αγώνας',
@@ -130,6 +131,8 @@ const i18n = (() => {
       'dijk.done':            'Η πλοήγηση ολοκληρώθηκε.',
       'dijk.dist.table':      'Πίνακας αποστάσεων (km)',
       'dijk.desc':            'Περιγραφή',
+      'dijk.col.node':        'Τοποθεσία',
+      'dijk.col.prev':        'Προηγ.',
 
       // Leaderboard
       'lb.title':             'Βαθμολογία — Top 10',
@@ -143,7 +146,8 @@ const i18n = (() => {
       // Training
       'train.title':          'Λειτουργία Εκπαίδευσης',
       'train.sub':            'Εξερεύνησε χάρτες χωρίς πίεση χρόνου ή βαθμολόγησης.',
-      'train.hint':           '💡 Συμβουλή: μετά την υποβολή μπορείς να δεις βήμα-βήμα πώς η GPS βρίσκει τη διαδρομή.',
+      'train.hint':           '💡 Συμβουλή: μετά την υποβολή μπορείς να δεις βήμα-βήμα πώς ο αλγόριθμος βρίσκει τη διαδρομή.',
+      'train.no.timer':       '— χωρίς χρονόμετρο',
 
       // Common
       'footer.uni':           'CEID, Πανεπιστήμιο Πατρών',
@@ -217,6 +221,7 @@ const i18n = (() => {
       'dash.stats.time':      'Best time',
       'dash.history':         'Round history',
       'dash.no.history':      "You haven't played yet.",
+      'dash.date':            'Date',
 
       'game.setup.title':     'New Race',
       'game.diff.title':      'Difficulty',
@@ -267,6 +272,8 @@ const i18n = (() => {
       'dijk.done':            'Navigation complete.',
       'dijk.dist.table':      'Distance table (km)',
       'dijk.desc':            'Description',
+      'dijk.col.node':        'Location',
+      'dijk.col.prev':        'Prev.',
 
       'lb.title':             'Scores — Top 10',
       'lb.rank':              '#',
@@ -278,7 +285,8 @@ const i18n = (() => {
 
       'train.title':          'Training Mode',
       'train.sub':            'Explore city maps without time pressure or scoring.',
-      'train.hint':           '💡 Tip: after submitting you can watch GPS (Dijkstra) find the shortest route step by step.',
+      'train.hint':           '💡 Tip: after submitting you can watch Dijkstra find the shortest route step by step.',
+      'train.no.timer':       '— no timer',
 
       'footer.uni':           'CEID, University of Patras',
 

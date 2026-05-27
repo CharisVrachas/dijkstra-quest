@@ -89,7 +89,7 @@
                 <th>|E|</th>
                 <th data-i18n="game.timer">Χρόνος</th>
                 <th data-i18n="res.points">Πόντοι</th>
-                <th>Ημερομηνία</th>
+                <th data-i18n="dash.date">Ημερομηνία</th>
               </tr>
             </thead>
             <tbody id="historyBody">
@@ -133,12 +133,12 @@
         tbody.innerHTML = data.scores.map((sc, i) => `
           <tr>
             <td>${i + 1}</td>
-            <td><span class="badge bg-secondary">${sc.difficulty}</span></td>
+            <td><span class="badge bg-secondary">${i18n.t('game.diff.' + sc.difficulty)}</span></td>
             <td>${sc.graph_n}</td>
             <td>${sc.graph_edges}</td>
             <td>${fmtTime(sc.time_seconds)}</td>
             <td class="fw-bold text-primary">${sc.points}</td>
-            <td class="text-muted small">${new Date(sc.created_at).toLocaleDateString('el-GR')}</td>
+            <td class="text-muted small">${new Date(sc.created_at).toLocaleDateString(i18n.getLang() === 'el' ? 'el-GR' : 'en-GB')}</td>
           </tr>`).join('');
       }
     });
