@@ -141,12 +141,12 @@
       cytoscape({
         container: document.getElementById('democy'),
         elements: [
-          { data: { id: 's',  label: 'Σύνταγμα'    }, classes: 'source' },
-          { data: { id: 'a',  label: 'Μοναστηράκι' } },
-          { data: { id: 'b',  label: 'Θησείο'       } },
-          { data: { id: 'c',  label: 'Κολωνάκι'     } },
-          { data: { id: 'd',  label: 'Πλάκα'        } },
-          { data: { id: 't',  label: 'Ακρόπολη'     }, classes: 'dest' },
+          { data: { id: 's', label: 'Σύνταγμα'    }, position: { x: 260, y:  55 }, classes: 'source' },
+          { data: { id: 'a', label: 'Μοναστηράκι' }, position: { x: 110, y: 155 } },
+          { data: { id: 'b', label: 'Θησείο'       }, position: { x: 130, y: 275 } },
+          { data: { id: 'c', label: 'Κολωνάκι'     }, position: { x: 420, y: 115 } },
+          { data: { id: 'd', label: 'Πλάκα'        }, position: { x: 310, y: 215 } },
+          { data: { id: 't', label: 'Ακρόπολη'     }, position: { x: 390, y: 295 }, classes: 'dest' },
 
           { data: { id: 'e1', source: 's', target: 'a', weightLabel: '1.2 km' }, classes: 'shortest' },
           { data: { id: 'e2', source: 's', target: 'c', weightLabel: '2.4 km' } },
@@ -160,27 +160,26 @@
         style: [
           { selector: 'node', style: {
             label: 'data(label)', 'background-color': '#546e7a', color: '#1a237e',
-            'text-valign': 'bottom', 'text-halign': 'center', 'text-margin-y': 6,
-            'font-size': 11, 'font-weight': '600',
-            'text-background-color': '#fff', 'text-background-opacity': 0.9, 'text-background-padding': '2px',
-            width: 28, height: 28
+            'text-valign': 'bottom', 'text-halign': 'center', 'text-margin-y': 7,
+            'font-size': 12, 'font-weight': '700',
+            'text-background-color': '#fff', 'text-background-opacity': 0.95,
+            'text-background-padding': '3px', 'text-border-radius': 3,
+            width: 34, height: 34
           }},
-          { selector: 'node.source', style: { 'background-color': '#198754' } },
-          { selector: 'node.dest',   style: { 'background-color': '#dc3545' } },
+          { selector: 'node.source', style: { 'background-color': '#198754', color: '#1b5e20' } },
+          { selector: 'node.dest',   style: { 'background-color': '#dc3545', color: '#b71c1c' } },
           { selector: 'edge', style: {
-            label: 'data(weightLabel)', width: 2, 'line-color': '#cbd5e1',
-            'font-size': 10, 'text-background-color': '#fff', 'text-background-opacity': 0.85,
-            'text-background-padding': '2px', 'curve-style': 'bezier'
+            label: 'data(weightLabel)', width: 2.5, 'line-color': '#b0bec5',
+            'font-size': 11, 'text-background-color': '#fff', 'text-background-opacity': 0.9,
+            'text-background-padding': '2px', 'curve-style': 'bezier', color: '#546e7a'
           }},
-          { selector: 'edge.shortest', style: { 'line-color': '#6f42c1', width: 4 } }
+          { selector: 'edge.shortest', style: { 'line-color': '#6f42c1', width: 5, color: '#4a148c' } }
         ],
-        layout: {
-          name: 'cose', animate: false, padding: 40,
-          nodeRepulsion: () => 8000, idealEdgeLength: () => 100, fit: true
-        },
+        layout: { name: 'preset', fit: true, padding: 45 },
         userZoomingEnabled: false,
         userPanningEnabled: false,
-        autoungrabify: true
+        autoungrabify: true,
+        autounselectify: true
       });
     }
   </script>
