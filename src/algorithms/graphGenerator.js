@@ -17,8 +17,8 @@ const LOCATION_POOL = [
   'Ηλιούπολη',   'Γλυφάδα',     'Μοσχάτο',     'Άλιμος',      'Βριλήσσια'
 ];
 
-function randInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function randFloat(min, max) {
+  return Math.round((Math.random() * (max - min) + min) * 10) / 10;
 }
 
 function shuffle(arr) {
@@ -58,7 +58,7 @@ function generateGraph(n, p, minWeight = 1, maxWeight = 20) {
     const key = `${Math.min(i, j)}-${Math.max(i, j)}`;
     if (edgeSet.has(key)) return;
     edgeSet.add(key);
-    const weight = randInt(minWeight, maxWeight);
+    const weight = randFloat(minWeight, maxWeight);
     edges.push({
       id: `e${edgeId++}`,
       source: `v${Math.min(i, j)}`,
@@ -87,9 +87,9 @@ function generateGraph(n, p, minWeight = 1, maxWeight = 20) {
 }
 
 const DIFFICULTY_PRESETS = {
-  beginner: { n: 5,  p: 0.50, minWeight: 1, maxWeight: 10 },
-  normal:   { n: 8,  p: 0.40, minWeight: 1, maxWeight: 20 },
-  advanced: { n: 12, p: 0.35, minWeight: 1, maxWeight: 30 }
+  beginner: { n: 6,  p: 0.40, minWeight: 0.5, maxWeight: 3.0 },
+  normal:   { n: 9,  p: 0.35, minWeight: 0.5, maxWeight: 5.0 },
+  advanced: { n: 12, p: 0.30, minWeight: 0.3, maxWeight: 7.0 }
 };
 
 function getDifficultyParams(difficulty) {

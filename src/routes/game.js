@@ -25,27 +25,34 @@ router.post('/generate', requireAuth, (req, res) => {
     }
 
     // Sanitise params
-    n         = Math.max(4, Math.min(15, parseInt(n)         || 6));
-    p         = Math.max(0.1, Math.min(0.95, parseFloat(p)   || 0.5));
-    minWeight = Math.max(1, Math.min(50,  parseInt(minWeight) || 1));
-    maxWeight = Math.max(minWeight, Math.min(100, parseInt(maxWeight) || 20));
+    n         = Math.max(4, Math.min(15, parseInt(n)            || 6));
+    p         = Math.max(0.1, Math.min(0.95, parseFloat(p)      || 0.5));
+    minWeight = Math.max(0.1, Math.min(50,  parseFloat(minWeight) || 0.5));
+    maxWeight = Math.max(minWeight, Math.min(100, parseFloat(maxWeight) || 5.0));
 
-    const graph = generateGraph(n, p, minWeight, maxWeight);
+    // Minimum SP edges required for this difficulty (keeps the puzzle interesting)
+    const minPathEdges = (difficulty === 'beginner' || difficulty === 'custom') ? 1 : 3;
 
-    // Pick source and destination (guaranteed different)
-    const nodeIds = graph.nodes.map(nd => nd.id);
-    let source, destination;
+    let graph, source, destination;
+    let attempts = 0;
+
     do {
-      source      = nodeIds[Math.floor(Math.random() * nodeIds.length)];
-      destination = nodeIds[Math.floor(Math.random() * nodeIds.length)];
-    } while (source === destination);
+      graph = generateGraph(n, p, minWeight, maxWeight);
+      const nodeIds = graph.nodes.map(nd => nd.id);
+      let tries = 0;
+      do {
+        source      = nodeIds[Math.floor(Math.random() * nodeIds.length)];
+        destination = nodeIds[Math.floor(Math.random() * nodeIds.length)];
+      } while (source === destination && ++tries < 50);
 
-    // Server-side verification: path must exist
-    const { dist } = dijkstra(graph.nodes, graph.edges, source);
-    if (dist[destination] === Infinity) {
-      // Graph is connected by construction — shouldn't happen, but be safe
-      return res.status(500).json({ error: 'Could not find a path. Please try again.' });
-    }
+      const { dist, getPath } = dijkstra(graph.nodes, graph.edges, source);
+      if (dist[destination] === Infinity) { attempts++; continue; }
+
+      const path = getPath(destination);
+      if (path && path.edges.length >= minPathEdges) break;
+
+      attempts++;
+    } while (attempts < 6);
 
     req.session.currentGame = {
       nodes:       graph.nodes,

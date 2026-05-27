@@ -15,7 +15,7 @@ const i18n = (() => {
       'nav.register':     'Εγγραφή',
       'nav.logout':       'Αποσύνδεση',
       'nav.dashboard':    'Αρχική',
-      'nav.play':         'Παιχνίδι',
+      'nav.play':         'Αγώνας',
       'nav.training':     'Εκπαίδευση',
       'nav.leaderboard':  'Κατάταξη',
       'nav.lang':         'EN',
@@ -33,7 +33,7 @@ const i18n = (() => {
       'home.feat.rank.t':     'Παγκόσμια Κατάταξη',
       'home.feat.rank.d':     'Συγκρίνεσαι με τους top-10 πλοηγητές — ο χρόνος μετράει!',
       'home.feat.bi.t':       'Δίγλωσσο',
-      'home.feat.bi.d':       'Το παιχνίδι είναι πλήρως διαθέσιμο σε Ελληνικά και Αγγλικά.',
+      'home.feat.bi.d':       'Διαθέσιμο σε Ελληνικά και Αγγλικά.',
 
       // Auth
       'auth.username':        'Όνομα χρήστη',
@@ -49,8 +49,8 @@ const i18n = (() => {
       // Dashboard
       'dash.welcome':         'Καλωσήρθες,',
       'dash.subtitle':        'Τι θέλεις να κάνεις σήμερα;',
-      'dash.card.play.t':     'Κανονικό Παιχνίδι',
-      'dash.card.play.d':     'Επέλεξε χάρτη και βρες τη συντομότερη διαδρομή. Ο χρόνος μετράει!',
+      'dash.card.play.t':     'Αγώνας',
+      'dash.card.play.d':     'Βρες τη συντομότερη διαδρομή στο οδικό δίκτυο. Ο χρόνος μετράει!',
       'dash.card.play.btn':   'Παίξε',
       'dash.card.train.t':    'Εκπαίδευση',
       'dash.card.train.d':    'Εξερεύνησε χάρτες και τον αλγόριθμο GPS χωρίς χρονόμετρο και πόντους.',
@@ -66,8 +66,8 @@ const i18n = (() => {
       'dash.no.history':      'Δεν έχεις παίξει ακόμα.',
 
       // Game setup
-      'game.setup.title':     'Νέα Διαδρομή',
-      'game.diff.title':      'Δυσκολία χάρτη',
+      'game.setup.title':     'Νέος Αγώνας',
+      'game.diff.title':      'Δυσκολία',
       'game.diff.beginner':   'Αρχάριος',
       'game.diff.normal':     'Κανονικό',
       'game.diff.advanced':   'Προχωρημένο',
@@ -76,11 +76,16 @@ const i18n = (() => {
       'game.param.p':         'Πυκνότητα δρόμων (p)',
       'game.param.wmin':      'Ελάχ. απόσταση',
       'game.param.wmax':      'Μέγ. απόσταση',
-      'game.generate.btn':    'Δημιουργία χάρτη',
+      'game.generate.btn':    'Δημιουργία οδικού δικτύου',
       'game.saved.title':     'Αποθηκευμένοι χάρτες',
       'game.saved.load':      'Φόρτωση',
 
       // Game HUD
+      'game.timer.start':     'Ξεκίνα χρονόμετρο',
+      'game.already.submitted': 'Έχεις ήδη υποβάλει!',
+      'game.select.edge':     'Επέλεξε τουλάχιστον έναν δρόμο.',
+      'game.saved.ok':        'Αποθηκεύτηκε!',
+      'game.correct.toast':   'πόντοι! Μπράβο!',
       'game.source':          'Αφετηρία',
       'game.dest':            'Προορισμός',
       'game.weight':          'Απόσταση διαδρομής (km)',
@@ -115,7 +120,7 @@ const i18n = (() => {
       'dijk.desc':            'Περιγραφή',
 
       // Leaderboard
-      'lb.title':             'Παγκόσμια Κατάταξη — Top 10',
+      'lb.title':             'Κατάταξη Παικτών — Top 10',
       'lb.rank':              '#',
       'lb.player':            'Παίκτης',
       'lb.total':             'Σύνολο πόντων',
@@ -140,7 +145,7 @@ const i18n = (() => {
       'nav.register':     'Register',
       'nav.logout':       'Logout',
       'nav.dashboard':    'Home',
-      'nav.play':         'Play',
+      'nav.play':         'Race',
       'nav.training':     'Training',
       'nav.leaderboard':  'Leaderboard',
       'nav.lang':         'ΕΛ',
@@ -157,7 +162,7 @@ const i18n = (() => {
       'home.feat.rank.t':     'Global Leaderboard',
       'home.feat.rank.d':     'Compete with the top-10 navigators — time matters!',
       'home.feat.bi.t':       'Bilingual',
-      'home.feat.bi.d':       'Fully available in Greek and English.',
+      'home.feat.bi.d':       'Available in Greek and English.',
 
       'auth.username':        'Username',
       'auth.email':           'Email',
@@ -171,8 +176,8 @@ const i18n = (() => {
 
       'dash.welcome':         'Welcome,',
       'dash.subtitle':        'What would you like to do today?',
-      'dash.card.play.t':     'Play Game',
-      'dash.card.play.d':     'Choose a map and find the shortest route. The clock is ticking!',
+      'dash.card.play.t':     'Race',
+      'dash.card.play.d':     'Find the shortest route in the road network. The clock is ticking!',
       'dash.card.play.btn':   'Play',
       'dash.card.train.t':    'Training',
       'dash.card.train.d':    'Explore city maps and the GPS algorithm — no timer, no scoring.',
@@ -187,8 +192,8 @@ const i18n = (() => {
       'dash.history':         'Round history',
       'dash.no.history':      "You haven't played yet.",
 
-      'game.setup.title':     'New Route',
-      'game.diff.title':      'Map difficulty',
+      'game.setup.title':     'New Race',
+      'game.diff.title':      'Difficulty',
       'game.diff.beginner':   'Beginner',
       'game.diff.normal':     'Normal',
       'game.diff.advanced':   'Advanced',
@@ -197,10 +202,15 @@ const i18n = (() => {
       'game.param.p':         'Road density (p)',
       'game.param.wmin':      'Min distance',
       'game.param.wmax':      'Max distance',
-      'game.generate.btn':    'Generate map',
+      'game.generate.btn':    'Generate road network',
       'game.saved.title':     'Saved maps',
       'game.saved.load':      'Load',
 
+      'game.timer.start':     'Start timer',
+      'game.already.submitted': "You've already submitted!",
+      'game.select.edge':     'Select at least one road.',
+      'game.saved.ok':        'Saved!',
+      'game.correct.toast':   'points! Well done!',
       'game.source':          'Start',
       'game.dest':            'Destination',
       'game.weight':          'Route distance (km)',
@@ -232,7 +242,7 @@ const i18n = (() => {
       'dijk.dist.table':      'Distance table (km)',
       'dijk.desc':            'Description',
 
-      'lb.title':             'Global Leaderboard — Top 10',
+      'lb.title':             'Player Leaderboard — Top 10',
       'lb.rank':              '#',
       'lb.player':            'Player',
       'lb.total':             'Total points',

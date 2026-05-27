@@ -66,6 +66,7 @@ let selectedEdges = new Set();
 let timerInterval = null;
 let elapsedSec  = 0;
 let submitted   = false;
+let timerStarted = false;
 
 // Dijkstra viz state
 let dijkSteps   = [];
@@ -146,12 +147,13 @@ function wireButtons() {
   // These buttons exist only after play phase renders:
   document.addEventListener('click', e => {
     const t = e.target;
-    if (t.id === 'submitBtn')  handleSubmit();
-    if (t.id === 'resetBtn')   resetSelection();
-    if (t.id === 'newGameBtn') backToSetup();
-    if (t.id === 'replayBtn')  replayGraph();
-    if (t.id === 'saveBtn')    toggleSaveForm();
+    if (t.id === 'submitBtn')     handleSubmit();
+    if (t.id === 'resetBtn')      resetSelection();
+    if (t.id === 'newGameBtn')    backToSetup();
+    if (t.id === 'replayBtn')     replayGraph();
+    if (t.id === 'saveBtn')       toggleSaveForm();
     if (t.id === 'confirmSaveBtn') confirmSave();
+    if (t.id === 'timerStartBtn') startTimer();
   });
 
   // Dijkstra modal controls
@@ -205,18 +207,31 @@ function startPlayPhase(graph, source, destination) {
   const saveForm = document.getElementById('saveForm');
   if (saveForm) saveForm.classList.add('d-none');
 
-  // Timer (skip in training)
+  // Timer (skip in training) — starts only when player clicks the start button or first edge
   clearInterval(timerInterval);
-  const timerDisplay = document.getElementById('timerDisplay');
-  if (timerDisplay && !TRAINING) {
-    timerDisplay.innerHTML = `0<small class="fs-6 ms-1">${i18n.t('sec')}</small>`;
-    timerInterval = setInterval(() => {
-      elapsedSec++;
-      timerDisplay.innerHTML = `${elapsedSec}<small class="fs-6 ms-1">${i18n.t('sec')}</small>`;
-    }, 1000);
+  timerStarted = false;
+  const timerDisplay  = document.getElementById('timerDisplay');
+  const timerStartBtn = document.getElementById('timerStartBtn');
+  if (!TRAINING) {
+    if (timerDisplay)  timerDisplay.innerHTML = `0<small class="fs-6 ms-1">${i18n.t('sec')}</small>`;
+    if (timerStartBtn) { timerStartBtn.textContent = i18n.t('game.timer.start'); timerStartBtn.classList.remove('d-none'); }
   }
 
   renderGraph();
+}
+
+// ── Timer start ───────────────────────────────────────────────────────────────
+
+function startTimer() {
+  if (timerStarted || TRAINING) return;
+  timerStarted = true;
+  const btn = document.getElementById('timerStartBtn');
+  if (btn) btn.classList.add('d-none');
+  const timerDisplay = document.getElementById('timerDisplay');
+  timerInterval = setInterval(() => {
+    elapsedSec++;
+    if (timerDisplay) timerDisplay.innerHTML = `${elapsedSec}<small class="fs-6 ms-1">${i18n.t('sec')}</small>`;
+  }, 1000);
 }
 
 // ── Cytoscape rendering ───────────────────────────────────────────────────────
@@ -239,12 +254,25 @@ function renderGraph() {
     container: document.getElementById('cy'),
     elements:  [...cyNodes, ...cyEdges],
     style:     CY_STYLE,
-    layout:    { name: 'cose', animate: true, animationDuration: 400, randomize: true }
+    layout: {
+      name: 'cose',
+      animate: true,
+      animationDuration: 600,
+      randomize: true,
+      padding: 60,
+      fit: true,
+      nodeRepulsion: () => 10000,
+      idealEdgeLength: () => 120,
+      edgeElasticity: () => 200,
+      gravity: 1,
+      numIter: 1000
+    }
   });
 
   // ── Edge click: select / deselect ──────────────────────────────────────────
   cy.on('tap', 'edge', evt => {
     if (submitted) return;
+    startTimer(); // auto-start on first edge click if not already started
     const edge   = evt.target;
     const edgeId = edge.id();
 
@@ -295,11 +323,9 @@ function resetSelection() {
 // ── Submit ────────────────────────────────────────────────────────────────────
 
 async function handleSubmit() {
-  if (submitted) { showToast('Έχεις ήδη υποβάλει!', 'warning'); return; }
+  if (submitted) { showToast(i18n.t('game.already.submitted'), 'warning'); return; }
   if (selectedEdges.size === 0) {
-    showToast(i18n.getLang() === 'el'
-      ? 'Επέλεξε τουλάχιστον μία ακμή.'
-      : 'Select at least one edge.', 'warning');
+    showToast(i18n.t('game.select.edge'), 'warning');
     return;
   }
 
@@ -342,7 +368,9 @@ function showResult(res) {
 
   // Shortest path info
   document.getElementById('spWeight').textContent =
-    res.shortestPath ? res.shortestPath.totalWeight : '—';
+    res.shortestPath
+      ? `${Math.round(res.shortestPath.totalWeight * 10) / 10} km`
+      : '—';
 
   const spNodesEl = document.getElementById('spNodes');
   if (res.shortestPath && res.shortestPath.nodes) {
@@ -356,7 +384,7 @@ function showResult(res) {
   // Show Dijkstra button
   document.getElementById('dijkBtnWrap').classList.remove('d-none');
 
-  if (res.correct) showToast(`+${res.points} πόντοι! Μπράβο! 🎉`, 'success');
+  if (res.correct) showToast(`+${res.points} ${i18n.t('game.correct.toast')} 🎉`, 'success');
 }
 
 // ── Highlight shortest path on main graph ─────────────────────────────────────
@@ -401,7 +429,7 @@ async function confirmSave() {
   const name = document.getElementById('saveNameInput')?.value.trim() || '';
   const res  = await apiPost('/api/game/save', { name });
   if (res.success) {
-    showToast(i18n.getLang() === 'el' ? 'Αποθηκεύτηκε!' : 'Saved!', 'success');
+    showToast(i18n.t('game.saved.ok'), 'success');
     document.getElementById('saveForm').classList.add('d-none');
   } else {
     showToast(res.error || i18n.t('error.generic'), 'danger');

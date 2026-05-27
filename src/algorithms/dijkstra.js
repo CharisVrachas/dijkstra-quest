@@ -17,6 +17,7 @@
  */
 function dijkstra(nodes, edges, sourceId, labelMap = {}) {
   const lbl = id => labelMap[id] || id;
+  const fmt = d => d === Infinity ? '∞' : `${Math.round(d * 10) / 10} km`;
   // Build adjacency list
   const adj = {};
   nodes.forEach(n => { adj[n.id] = []; });
@@ -44,8 +45,8 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}) {
     source: sourceId,
     dist: { ...dist },
     cloud: [],
-    description_el: `Αρχικοποίηση: d(${lbl(sourceId)})=0 km, όλα τα άλλα σημεία = ∞`,
-    description_en: `Initialise: d(${lbl(sourceId)})=0 km, all other locations = ∞`
+    description_el: `Αρχικοποίηση: d(${lbl(sourceId)}) = 0 km, όλες οι υπόλοιπες τοποθεσίες = ∞`,
+    description_en: `Initialise: d(${lbl(sourceId)}) = 0 km, all other locations = ∞`
   });
 
   while (visited.size < nodes.length) {
@@ -68,8 +69,8 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}) {
       node: u,
       dist: { ...dist },
       cloud: [...visited],
-      description_el: `Επίσκεψη: ${lbl(u)} → εισέρχεται στο «σύννεφο» με d = ${dist[u]} km`,
-      description_en: `Visit: ${lbl(u)} → enters the cloud with d = ${dist[u]} km`
+      description_el: `Επίσκεψη: ${lbl(u)} → εισέρχεται στο «σύννεφο» με d = ${fmt(dist[u])}`,
+      description_en: `Visit: ${lbl(u)} → enters the cloud with d = ${fmt(dist[u])}`
     });
 
     // Relax neighbours
@@ -77,7 +78,7 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}) {
       if (visited.has(v)) return;
       const newDist = dist[u] + weight;
       if (newDist < dist[v]) {
-        const oldDist = dist[v] === Infinity ? '∞' : dist[v];
+        const oldDist = dist[v];
         dist[v]     = newDist;
         prev[v]     = u;
         prevEdge[v] = edgeId;
@@ -90,8 +91,8 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}) {
           newDist,
           dist: { ...dist },
           cloud: [...visited],
-          description_el: `Δρόμος ${lbl(u)} → ${lbl(v)}: d(${lbl(v)}) ${oldDist} → ${newDist} km`,
-          description_en: `Road ${lbl(u)} → ${lbl(v)}: d(${lbl(v)}) ${oldDist} → ${newDist} km`
+          description_el: `Δρόμος ${lbl(u)} → ${lbl(v)}: d(${lbl(v)}) ${fmt(oldDist)} → ${fmt(newDist)}`,
+          description_en: `Road ${lbl(u)} → ${lbl(v)}: d(${lbl(v)}) ${fmt(oldDist)} → ${fmt(newDist)}`
         });
       }
     });
@@ -147,7 +148,7 @@ function checkAnswer(nodes, edges, source, destination, selectedEdgeIds, labelMa
     playerWeight += edgeMap[eid].weight;
   }
 
-  if (playerWeight !== expectedWeight) {
+  if (Math.abs(playerWeight - expectedWeight) > 0.001) {
     return { correct: false, reason: 'wrong_weight', shortestPath, steps };
   }
 
