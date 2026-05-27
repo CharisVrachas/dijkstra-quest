@@ -255,19 +255,21 @@ function renderGraph() {
     elements:  [...cyNodes, ...cyEdges],
     style:     CY_STYLE,
     layout: {
-      name: 'fcose',
+      name: 'cose',
       animate: true,
       animationDuration: 700,
       randomize: true,
       padding: 80,
       fit: true,
-      nodeDimensionsIncludeLabels: true,
-      nodeRepulsion: 9000,
-      idealEdgeLength: 180,
-      edgeElasticity: 0.45,
-      gravity: 0.25,
-      gravityRange: 3.8,
-      numIter: 2500
+      nodeRepulsion: () => 800000,
+      idealEdgeLength: () => 200,
+      edgeElasticity: () => 100,
+      gravity: 0.15,
+      nodeOverlap: 60,
+      numIter: 3000,
+      initialTemp: 1000,
+      coolingFactor: 0.95,
+      minTemp: 1.0
     }
   });
 
@@ -480,7 +482,7 @@ function initDijkCy() {
       }))
     ],
     style:  CY_STYLE,
-    layout: { name: 'fcose', animate: false, randomize: false, nodeDimensionsIncludeLabels: true, nodeRepulsion: 9000, idealEdgeLength: 120, padding: 20 }
+    layout: { name: 'cose', animate: false, randomize: false, nodeRepulsion: () => 400000, idealEdgeLength: () => 100, gravity: 0.2, padding: 15 }
   });
   // Sync positions with main cy if available
   if (cy) {
