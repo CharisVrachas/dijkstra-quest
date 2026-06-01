@@ -30,8 +30,10 @@ router.post('/generate', requireAuth, (req, res) => {
     minWeight = Math.max(0.1, Math.min(50,  parseFloat(minWeight) || 0.5));
     maxWeight = Math.max(minWeight, Math.min(100, parseFloat(maxWeight) || 5.0));
 
-    // Minimum SP edges required for this difficulty (keeps the puzzle interesting)
-    const minPathEdges = (difficulty === 'beginner' || difficulty === 'custom') ? 1 : 3;
+    // Minimum SP hop-count per difficulty — ensures non-trivial puzzles
+    const minPathEdges = difficulty === 'advanced' ? 4
+                       : difficulty === 'normal'   ? 3
+                       : 2; // beginner & custom: at least 2 hops
 
     let graph, source, destination;
     let attempts = 0;
@@ -39,20 +41,23 @@ router.post('/generate', requireAuth, (req, res) => {
     do {
       graph = generateGraph(n, p, minWeight, maxWeight);
       const nodeIds = graph.nodes.map(nd => nd.id);
-      let tries = 0;
-      do {
-        source      = nodeIds[Math.floor(Math.random() * nodeIds.length)];
-        destination = nodeIds[Math.floor(Math.random() * nodeIds.length)];
-      } while (source === destination && ++tries < 50);
 
-      const { dist, getPath } = dijkstra(graph.nodes, graph.edges, source);
-      if (dist[destination] === Infinity) { attempts++; continue; }
-
-      const path = getPath(destination);
-      if (path && path.edges.length >= minPathEdges) break;
-
+      // Search all source/dest pairs to find one whose SP has enough hops
+      let found = false;
+      const shuffledIds = [...nodeIds].sort(() => Math.random() - 0.5);
+      outer: for (const s of shuffledIds) {
+        const { dist, getPath } = dijkstra(graph.nodes, graph.edges, s);
+        for (const d of shuffledIds) {
+          if (s === d || dist[d] === Infinity) continue;
+          const path = getPath(d);
+          if (path && path.edges.length >= minPathEdges) {
+            source = s; destination = d; found = true; break outer;
+          }
+        }
+      }
+      if (found) break;
       attempts++;
-    } while (attempts < 6);
+    } while (attempts < 20);
 
     req.session.currentGame = {
       nodes:       graph.nodes,
