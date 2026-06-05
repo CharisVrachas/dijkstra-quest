@@ -239,6 +239,18 @@ main { flex: 1; }
   z-index: 9990;
 }
 
+/* ── Extra small screens (phones) ─────────────────────────── */
+
+@media (max-width: 576px) {
+  #gameWrapper { padding: .5rem; gap: .5rem; }
+  #cy { height: 320px !important; }
+  #setupPanel, #hudPanel { padding: .75rem; font-size: .9rem; }
+  .hud-value { font-size: 1.1rem; }
+  #timerDisplay { font-size: 1.5rem; }
+  .hud-node { font-size: .85rem; padding: 2px 8px; }
+  .diff-badge { font-size: .8rem !important; padding: .3rem .6rem !important; }
+}
+
 /* ── Footer ────────────────────────────────────────────────── */
 
 footer {

@@ -45,8 +45,8 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}) {
     source: sourceId,
     dist: { ...dist },
     cloud: [],
-    description_el: `Αρχικοποίηση: d(${lbl(sourceId)}) = 0 km, όλες οι υπόλοιπες τοποθεσίες = ∞`,
-    description_en: `Initialise: d(${lbl(sourceId)}) = 0 km, all other locations = ∞`
+    description_el: `Έναρξη: η αφετηρία ${lbl(sourceId)} έχει απόσταση 0 km. Όλες οι υπόλοιπες τοποθεσίες ξεκινούν με απόσταση ∞.`,
+    description_en: `Start: source ${lbl(sourceId)} has distance 0 km. All other locations start at ∞.`
   });
 
   while (visited.size < nodes.length) {
@@ -69,8 +69,8 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}) {
       node: u,
       dist: { ...dist },
       cloud: [...visited],
-      description_el: `Επίσκεψη: ${lbl(u)} → εισέρχεται στο «σύννεφο» με d = ${fmt(dist[u])}`,
-      description_en: `Visit: ${lbl(u)} → enters the cloud with d = ${fmt(dist[u])}`
+      description_el: `Επεξεργαζόμαστε: ${lbl(u)} (d = ${fmt(dist[u])}). Ελέγχουμε όλους τους γειτονικούς δρόμους.`,
+      description_en: `Processing: ${lbl(u)} (d = ${fmt(dist[u])}). Checking all neighbouring roads.`
     });
 
     // Relax neighbours
@@ -91,8 +91,8 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}) {
           newDist,
           dist: { ...dist },
           cloud: [...visited],
-          description_el: `Δρόμος ${lbl(u)} → ${lbl(v)}: d(${lbl(v)}) ${fmt(oldDist)} → ${fmt(newDist)}`,
-          description_en: `Road ${lbl(u)} → ${lbl(v)}: d(${lbl(v)}) ${fmt(oldDist)} → ${fmt(newDist)}`
+          description_el: `Βρέθηκε καλύτερη διαδρομή προς ${lbl(v)} μέσω ${lbl(u)}: ${fmt(newDist)} (ήταν ${fmt(oldDist)})`,
+          description_en: `Better route to ${lbl(v)} via ${lbl(u)}: ${fmt(newDist)} (was ${fmt(oldDist)})`
         });
       }
     });

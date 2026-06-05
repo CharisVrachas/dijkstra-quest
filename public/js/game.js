@@ -52,9 +52,10 @@ const CY_STYLE = [
       'target-arrow-shape': 'none'
     }
   },
-  { selector: 'edge.selected', style: { 'line-color': '#1565c0', width: 4 } },
-  { selector: 'edge.shortest', style: { 'line-color': '#6f42c1', width: 4 } },
-  { selector: 'edge.relaxed',  style: { 'line-color': '#198754', width: 3 } }
+  { selector: 'edge.selected',  style: { 'line-color': '#1565c0', width: 4 } },
+  { selector: 'edge.shortest',  style: { 'line-color': '#6f42c1', width: 4 } },
+  { selector: 'edge.relaxed',   style: { 'line-color': '#198754', width: 3 } },
+  { selector: 'edge.candidate', style: { 'line-color': '#ffc107', width: 3, 'line-style': 'dashed' } }
 ];
 
 // ── State ────────────────────────────────────────────────────────────────────
@@ -74,6 +75,10 @@ let dijkPath    = null;
 let dijkIndex   = -1;
 let dijkAutoInterval = null;
 let dijkPrev    = {};         // prev node map built per step
+
+// Guide mode state (training only)
+let guideIndex        = -1;
+let guideAutoInterval = null;
 
 // ── Bootstrap modal reference ─────────────────────────────────────────────────
 let dijkModalEl = null;
@@ -154,6 +159,12 @@ function wireButtons() {
     if (t.id === 'saveBtn')       toggleSaveForm();
     if (t.id === 'confirmSaveBtn') confirmSave();
     if (t.id === 'timerStartBtn') startTimer();
+    if (t.id === 'guideBtn')      startGuideMode();
+    if (t.id === 'guideCloseBtn') stopGuideMode();
+    if (t.id === 'guideNextBtn')  guideStep(1);
+    if (t.id === 'guidePrevBtn')  guideStep(-1);
+    if (t.id === 'guideAutoBtn')  startGuideAuto();
+    if (t.id === 'guideStopBtn')  stopGuideAuto();
   });
 
   // Dijkstra modal controls
@@ -186,6 +197,7 @@ async function generateGraph() {
 // ── Play phase ────────────────────────────────────────────────────────────────
 
 function startPlayPhase(graph, source, destination) {
+  stopGuideMode(); // reset any active training guide
   graphData = { ...graph, source, destination };
   selectedEdges.clear();
   submitted = false;
@@ -206,6 +218,12 @@ function startPlayPhase(graph, source, destination) {
   document.getElementById('dijkBtnWrap').classList.add('d-none');
   const saveForm = document.getElementById('saveForm');
   if (saveForm) saveForm.classList.add('d-none');
+
+  // Training: show guide button
+  if (TRAINING) {
+    const guideBtn = document.getElementById('guideBtn');
+    if (guideBtn) guideBtn.classList.remove('d-none');
+  }
 
   // Timer (skip in training) — starts only when player clicks the start button or first edge
   clearInterval(timerInterval);
@@ -310,7 +328,7 @@ function updateWeightSumDisplay() {
     }
   }
 
-  document.getElementById('weightSum').textContent = sum;
+  document.getElementById('weightSum').textContent = Math.round(sum * 10) / 10;
   document.getElementById('edgeList').innerHTML = items.length
     ? items.join('')
     : '<span class="text-muted small">—</span>';
@@ -437,6 +455,7 @@ async function confirmSave() {
   if (res.success) {
     showToast(i18n.t('game.saved.ok'), 'success');
     document.getElementById('saveForm').classList.add('d-none');
+    await loadSavedGraphs();
   } else {
     showToast(res.error || i18n.t('error.generic'), 'danger');
   }
@@ -551,42 +570,49 @@ function rebuildPrevMap() {
   }
 }
 
-function applyStepToCy(step) {
-  if (!dijkCy) return;
-  const { source, destination } = graphData;
+// Generic step visualiser — works on any Cytoscape instance (modal or main graph)
+function applyStepToGraph(step, targetCy, stepIdx, totalSteps, targetPath) {
+  if (!targetCy || !graphData) return;
+  const { source, destination, edges } = graphData;
 
-  // Reset all classes then re-apply cloud
-  dijkCy.nodes().forEach(n => {
+  targetCy.nodes().forEach(n => {
     n.removeClass('cloud current source dest');
     n.addClass(n.id() === source ? 'source' : n.id() === destination ? 'dest' : '');
   });
-  dijkCy.edges().removeClass('relaxed shortest');
+  targetCy.edges().removeClass('relaxed shortest candidate');
 
-  // Re-colour cloud (all visited nodes up to this step)
   const cloud = step.cloud || [];
   cloud.forEach(nid => {
-    const node = dijkCy.getElementById(nid);
-    if (node.length) {
-      node.removeClass('source dest');
-      node.addClass('cloud');
-    }
+    const node = targetCy.getElementById(nid);
+    if (node.length) { node.removeClass('source dest'); node.addClass('cloud'); }
   });
 
   if (step.action === 'visit' && step.node) {
-    const cur = dijkCy.getElementById(step.node);
-    cur.removeClass('cloud source dest').addClass('current');
+    targetCy.getElementById(step.node).removeClass('cloud source dest').addClass('current');
+
+    // Highlight candidate edges: from current node to unvisited neighbours
+    const cloudSet = new Set(cloud);
+    (edges || []).forEach(e => {
+      if ((e.source === step.node && !cloudSet.has(e.target)) ||
+          (e.target === step.node && !cloudSet.has(e.source))) {
+        targetCy.getElementById(e.id).addClass('candidate');
+      }
+    });
   }
 
   if (step.action === 'relax' && step.edge) {
-    dijkCy.getElementById(step.edge).addClass('relaxed');
+    targetCy.getElementById(step.edge).addClass('relaxed');
   }
 
-  // Highlight shortest path if we're at the last step
-  if (dijkIndex === dijkSteps.length - 1 && dijkPath) {
-    dijkPath.edges.forEach(eid => {
-      dijkCy.getElementById(eid).removeClass('relaxed').addClass('shortest');
+  if (stepIdx === totalSteps - 1 && targetPath) {
+    targetPath.edges.forEach(eid => {
+      targetCy.getElementById(eid).removeClass('relaxed candidate').addClass('shortest');
     });
   }
+}
+
+function applyStepToCy(step) {
+  applyStepToGraph(step, dijkCy, dijkIndex, dijkSteps.length, dijkPath);
 }
 
 // Render distance table
@@ -610,7 +636,7 @@ function renderDistTable(distMap, prevMap, highlightNode) {
 
   tbody.innerHTML = nodes.map(n => {
     const d    = distMap[n.id];
-    const dStr = (d === undefined || d === Infinity) ? '∞' : d + ' km';
+    const dStr = (d == null || d === Infinity) ? '∞' : `${Math.round(d * 10) / 10} km`;
     const p    = prevMap[n.id] ? labelOf(prevMap[n.id]) : '—';
     const hl   = n.id === highlightNode ? 'table-warning fw-bold' : '';
     const cl   = (dijkSteps[dijkIndex]?.cloud || []).includes(n.id) ? 'table-warning' : '';
@@ -644,6 +670,96 @@ function stopDijkAuto() {
   dijkAutoInterval = null;
   document.getElementById('dijkAutoBtn').classList.remove('d-none');
   document.getElementById('dijkStopBtn').classList.add('d-none');
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// TRAINING INLINE GUIDE (Dijkstra visualised on the main graph)
+// ════════════════════════════════════════════════════════════════════════════
+
+async function startGuideMode() {
+  const guidePanel = document.getElementById('guidePanel');
+  if (!guidePanel) return;
+
+  showLoading(true);
+  const res = await apiGet('/api/game/dijkstra-steps');
+  showLoading(false);
+  if (res.error) { showToast(res.error, 'danger'); return; }
+
+  dijkSteps  = res.steps  || [];
+  dijkPath   = res.shortestPath || null;
+  guideIndex = -1;
+
+  document.getElementById('guideTotal').textContent = dijkSteps.length;
+  document.getElementById('guideCur').textContent   = 0;
+  document.getElementById('guideProgress').style.width = '0%';
+  document.getElementById('guideDesc').textContent  = '—';
+  i18n.apply();
+
+  guidePanel.classList.remove('d-none');
+  const guideBtn = document.getElementById('guideBtn');
+  if (guideBtn) guideBtn.classList.add('d-none');
+}
+
+function guideStep(dir = 1) {
+  if (!dijkSteps.length) return;
+  guideIndex = Math.max(-1, Math.min(dijkSteps.length - 1, guideIndex + dir));
+
+  document.getElementById('guideCur').textContent = Math.max(0, guideIndex + 1);
+  document.getElementById('guideProgress').style.width =
+    guideIndex < 0 ? '0%' : `${Math.round(((guideIndex + 1) / dijkSteps.length) * 100)}%`;
+
+  if (guideIndex < 0) {
+    document.getElementById('guideDesc').textContent = '—';
+    resetGuideColors();
+    return;
+  }
+
+  const step = dijkSteps[guideIndex];
+  document.getElementById('guideDesc').textContent =
+    i18n.getLang() === 'el' ? step.description_el : step.description_en;
+
+  applyStepToGraph(step, cy, guideIndex, dijkSteps.length, dijkPath);
+}
+
+function resetGuideColors() {
+  if (!cy || !graphData) return;
+  const { source, destination } = graphData;
+  cy.nodes().forEach(n => {
+    n.removeClass('cloud current candidate');
+    n.addClass(n.id() === source ? 'source' : n.id() === destination ? 'dest' : '');
+  });
+  cy.edges().removeClass('relaxed shortest candidate');
+}
+
+function stopGuideMode() {
+  stopGuideAuto();
+  const guidePanel = document.getElementById('guidePanel');
+  if (guidePanel) guidePanel.classList.add('d-none');
+  const guideBtn = document.getElementById('guideBtn');
+  if (guideBtn) guideBtn.classList.remove('d-none');
+  resetGuideColors();
+  guideIndex = -1;
+}
+
+function startGuideAuto() {
+  if (guideAutoInterval) return;
+  const autoBtn = document.getElementById('guideAutoBtn');
+  const stopBtn = document.getElementById('guideStopBtn');
+  if (autoBtn) autoBtn.classList.add('d-none');
+  if (stopBtn) stopBtn.classList.remove('d-none');
+  guideAutoInterval = setInterval(() => {
+    if (guideIndex >= dijkSteps.length - 1) { stopGuideAuto(); return; }
+    guideStep(1);
+  }, 900);
+}
+
+function stopGuideAuto() {
+  clearInterval(guideAutoInterval);
+  guideAutoInterval = null;
+  const autoBtn = document.getElementById('guideAutoBtn');
+  const stopBtn = document.getElementById('guideStopBtn');
+  if (autoBtn) autoBtn.classList.remove('d-none');
+  if (stopBtn) stopBtn.classList.add('d-none');
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

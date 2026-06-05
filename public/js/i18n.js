@@ -44,7 +44,7 @@ const i18n = (() => {
       'home.about.cta':    'Ξεκίνα τώρα',
       'home.step1.t':      'Δημιούργησε οδικό δίκτυο',
       'home.step1.d':      'Επίλεξε δυσκολία και δημιούργησε τυχαίο δίκτυο γειτονιών.',
-      'home.step2.t':      'Επέλεξε δρόμους',
+      'home.step2.t':      'Επίλεξε δρόμους',
       'home.step2.d':      'Κλίκαρε στις ακμές για να χτίσεις τη διαδρομή σου.',
       'home.step3.t':      'Δες τη λύση Dijkstra',
       'home.step3.d':      'Παρακολούθησε τον αλγόριθμο να βρίσκει τη βέλτιστη διαδρομή βήμα-βήμα.',
@@ -135,6 +135,14 @@ const i18n = (() => {
       'dijk.desc':            'Περιγραφή',
       'dijk.col.node':        'Τοποθεσία',
       'dijk.col.prev':        'Προηγ.',
+      'dijk.table.hint':      'd(v) = συνολική απόσταση από αφετηρία · Προηγ. = μέσω ποιου κόμβου',
+      'dijk.legend.title':    'Υπόμνημα χρωμάτων',
+      'dijk.legend.current':  'Κόμβος υπό εξέταση',
+      'dijk.legend.cloud':    'Κόμβος ολοκληρωμένος',
+      'dijk.legend.candidate':'Δρόμοι υπό εξέταση',
+      'dijk.legend.relaxed':  'Ενημέρωση απόστασης',
+      'dijk.legend.sp':       'Συντομότερη διαδρομή',
+      'dijk.dist.note':       '* Αποστάσεις: προσομοιωμένες για εκπαιδευτικούς σκοπούς',
 
       // Leaderboard
       'lb.title':             'Βαθμολογία — Top 10',
@@ -148,8 +156,11 @@ const i18n = (() => {
       // Training
       'train.title':          'Λειτουργία Εκπαίδευσης',
       'train.sub':            'Εξερεύνησε χάρτες χωρίς πίεση χρόνου ή βαθμολόγησης.',
-      'train.hint':           '💡 Συμβουλή: μετά την υποβολή μπορείς να δεις βήμα-βήμα πώς ο αλγόριθμος βρίσκει τη διαδρομή.',
+      'train.hint':           '💡 Δημιούργησε ένα δίκτυο, δες τον αλγόριθμο βήμα-βήμα στον χάρτη, και μετά δοκίμασε μόνος σου.',
       'train.no.timer':       '— χωρίς χρονόμετρο',
+      'train.guide.btn':      '🎯 Δες Dijkstra βήμα-βήμα',
+      'train.guide.title':    'Καθοδηγούμενος Dijkstra',
+      'train.guide.play':     '▶ Παίξε μόνος σου',
 
       // Common
       'footer.uni':           'CEID, Πανεπιστήμιο Πατρών',
@@ -278,6 +289,14 @@ const i18n = (() => {
       'dijk.desc':            'Description',
       'dijk.col.node':        'Location',
       'dijk.col.prev':        'Prev.',
+      'dijk.table.hint':      'd(v) = total distance from start · Prev. = via which node',
+      'dijk.legend.title':    'Colour legend',
+      'dijk.legend.current':  'Node being processed',
+      'dijk.legend.cloud':    'Completed node',
+      'dijk.legend.candidate':'Roads under consideration',
+      'dijk.legend.relaxed':  'Distance updated',
+      'dijk.legend.sp':       'Shortest route',
+      'dijk.dist.note':       '* Distances: simulated for educational purposes',
 
       'lb.title':             'Scores — Top 10',
       'lb.rank':              '#',
@@ -289,8 +308,11 @@ const i18n = (() => {
 
       'train.title':          'Training Mode',
       'train.sub':            'Explore city maps without time pressure or scoring.',
-      'train.hint':           '💡 Tip: after submitting you can watch Dijkstra find the shortest route step by step.',
+      'train.hint':           '💡 Generate a network, watch the algorithm step by step on the map, then try on your own.',
       'train.no.timer':       '— no timer',
+      'train.guide.btn':      '🎯 Watch Dijkstra step by step',
+      'train.guide.title':    'Guided Dijkstra',
+      'train.guide.play':     '▶ Play on your own',
 
       'footer.uni':           'CEID, University of Patras',
 
