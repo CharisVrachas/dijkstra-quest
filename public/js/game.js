@@ -519,12 +519,12 @@ function dijkStep(direction = 1) {
 
   if (dijkIndex < 0) {
     // Reset to initial state
-    dijkCy && dijkCy.elements().removeClass('cloud current relaxed source dest');
+    dijkCy && dijkCy.elements().removeClass('cloud current relaxed source dest candidate');
     dijkCy && dijkCy.nodes().forEach(n => {
       const src = graphData.source, dst = graphData.destination;
       n.addClass(n.id() === src ? 'source' : n.id() === dst ? 'dest' : '');
     });
-    dijkCy && dijkCy.edges().removeClass('selected shortest relaxed');
+    dijkCy && dijkCy.edges().removeClass('selected shortest relaxed candidate');
     document.getElementById('stepDesc').textContent  = '—';
     document.getElementById('stepCur').textContent   = 0;
     document.getElementById('stepProgress').style.width = '0%';
