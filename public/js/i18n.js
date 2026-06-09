@@ -67,7 +67,7 @@ const i18n = (() => {
       'dash.card.play.d':     'Βρες τη συντομότερη διαδρομή στο οδικό δίκτυο. Ο χρόνος μετράει!',
       'dash.card.play.btn':   'Παίξε',
       'dash.card.train.t':    'Εκπαίδευση',
-      'dash.card.train.d':    'Εξερεύνησε χάρτες και τον αλγόριθμο GPS χωρίς χρονόμετρο και πόντους.',
+      'dash.card.train.d':    'Εξερεύνησε χάρτες και τον αλγόριθμο Dijkstra χωρίς χρονόμετρο και πόντους.',
       'dash.card.train.btn':  'Εκπαίδευση',
       'dash.card.rank.t':     'Βαθμολογία',
       'dash.card.rank.d':     'Δες τους top-10 παίκτες και τους προσωπικούς σου πόντους.',
@@ -111,7 +111,7 @@ const i18n = (() => {
       'game.reset.btn':       'Επαναφορά',
       'game.save.btn':        'Αποθήκευση χάρτη',
       'game.save.name':       'Όνομα χάρτη',
-      'game.dijkstra.btn':    'Δες λύση GPS (Dijkstra)',
+      'game.dijkstra.btn':    'Δες λύση Dijkstra',
 
       // Result
       'res.correct':          '✓ Βρήκες τη συντομότερη διαδρομή!',
@@ -123,7 +123,7 @@ const i18n = (() => {
       'res.replay.btn':       'Ξανά αυτόν τον χάρτη',
 
       // Dijkstra steps modal
-      'dijk.modal.title':     'GPS Βήμα-βήμα — Αλγόριθμος Dijkstra',
+      'dijk.modal.title':     'Βήμα-βήμα — Αλγόριθμος Dijkstra',
       'dijk.step':            'Βήμα',
       'dijk.of':              'από',
       'dijk.next.btn':        'Επόμενο βήμα',
@@ -225,7 +225,7 @@ const i18n = (() => {
       'dash.card.play.d':     'Find the shortest route in the road network. The clock is ticking!',
       'dash.card.play.btn':   'Play',
       'dash.card.train.t':    'Training',
-      'dash.card.train.d':    'Explore city maps and the GPS algorithm — no timer, no scoring.',
+      'dash.card.train.d':    'Explore maps and the Dijkstra algorithm — no timer, no scoring.',
       'dash.card.train.btn':  'Train',
       'dash.card.rank.t':     'Scores',
       'dash.card.rank.d':     'See the top-10 players and your personal stats.',
@@ -267,7 +267,7 @@ const i18n = (() => {
       'game.reset.btn':       'Reset',
       'game.save.btn':        'Save map',
       'game.save.name':       'Map name',
-      'game.dijkstra.btn':    'Show GPS solution (Dijkstra)',
+      'game.dijkstra.btn':    'Show Dijkstra solution',
 
       'res.correct':          '✓ You found the shortest route!',
       'res.wrong':            '✗ Not the shortest route. See below.',
@@ -277,7 +277,7 @@ const i18n = (() => {
       'res.new.btn':          'New route',
       'res.replay.btn':       'Replay this map',
 
-      'dijk.modal.title':     'GPS Step-by-Step — Dijkstra',
+      'dijk.modal.title':     'Step-by-Step — Dijkstra Algorithm',
       'dijk.step':            'Step',
       'dijk.of':              'of',
       'dijk.next.btn':        'Next step',

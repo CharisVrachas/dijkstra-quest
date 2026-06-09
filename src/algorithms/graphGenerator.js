@@ -3,18 +3,18 @@
  * Guarantees connectivity by first building a random spanning tree,
  * then adding additional edges probabilistically.
  *
- * Node labels are real Greek city neighbourhood names drawn from a pool,
- * giving the game its GPS / city-map theme.
+ * Node labels are fictional location names drawn from a pool,
+ * giving the game a fantasy city-map theme.
  */
 
-// Pool of 30 Greek city neighbourhoods — shuffle and pick n for each game.
+// Pool of 30 fictional location names — shuffle and pick n for each game.
 const LOCATION_POOL = [
-  'Σύνταγμα',    'Μοναστηράκι', 'Ακρόπολη',   'Θησείο',      'Κολωνάκι',
-  'Πλάκα',       'Εξάρχεια',    'Γκάζι',       'Κεραμεικός',  'Νέος Κόσμος',
-  'Παγκράτι',    'Ζωγράφου',    'Αμπελόκηποι', 'Κυψέλη',      'Καλλιθέα',
-  'Πειραιάς',    'Αιγάλεω',     'Περιστέρι',   'Μαρούσι',     'Χαλάνδρι',
-  'Βύρωνας',     'Δάφνη',       'Ίλιον',       'Νίκαια',      'Κορυδαλλός',
-  'Ηλιούπολη',   'Γλυφάδα',     'Μοσχάτο',     'Άλιμος',      'Βριλήσσια'
+  'Αλκαντρώ',    'Βορεάλη',     'Γλαυκίδα',    'Δαιδαλία',    'Ελυσία',
+  'Ζεφυρία',     'Ηλιόδρομος',  'Θαλερία',     'Ιθάκαρα',     'Καλυδώνα',
+  'Λαβυρίνθια',  'Μεγαλίδα',    'Νεφελία',     'Ξανθαρία',    'Ορθόλιθος',
+  'Πελαγόνη',    'Ροδανθία',    'Σελαναρία',   'Ταυροχώρι',   'Υπερίωνα',
+  'Φαλανθίδα',   'Χαλκεδώ',     'Ψαλτήρι',     'Ωκεανίδα',    'Αμφιόχη',
+  'Βλαχώνα',     'Κρονίδεια',   'Δρακοχώρι',   'Νεκταρόπολη', 'Αστεροχώρι'
 ];
 
 function randInt(min, max) {
