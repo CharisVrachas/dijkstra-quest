@@ -312,6 +312,10 @@ function renderGraph() {
     }
     updateWeightSumDisplay();
   });
+
+  // On mobile the container may not be fully laid out when Cytoscape first renders.
+  // A short delay lets the browser finish its layout pass before we re-fit.
+  setTimeout(() => { if (cy) { cy.resize(); cy.fit(undefined, 80); } }, 150);
 }
 
 // ── Weight sum ────────────────────────────────────────────────────────────────
