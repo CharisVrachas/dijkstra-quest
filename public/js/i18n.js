@@ -47,7 +47,7 @@ const i18n = (() => {
       'home.step2.t':      'Επίλεξε δρόμους',
       'home.step2.d':      'Κλίκαρε στις ακμές για να χτίσεις τη διαδρομή σου.',
       'home.step3.t':      'Δες τη λύση Dijkstra',
-      'home.step3.d':      'Παρακολούθησε τον αλγόριθμο να βρίσκει τη βέλτιστη διαδρομή βήμα-βήμα.',
+      'home.step3.d':      'Παρακολούθησε τον αλγόριθμο Dijkstra να βρίσκει τη βέλτιστη διαδρομή βήμα-βήμα.',
 
       // Auth
       'auth.username':        'Όνομα χρήστη',
@@ -115,8 +115,9 @@ const i18n = (() => {
 
       // Result
       'res.correct':          '✓ Βρήκες τη συντομότερη διαδρομή!',
-      'res.wrong':            '✗ Δεν είναι η συντομότερη. Δες τη σωστή παρακάτω.',
+      'res.wrong':            '✗ Δεν είναι η συντομότερη διαδρομή. Δες τη σωστή παρακάτω.',
       'res.points':           'Πόντοι που κερδίσατε',
+      'res.points.info':      'Πόντοι = (κόμβοι + ακμές) × 100 ÷ χρόνος (δευτ.)',
       'res.sp.weight':        'Συνολική απόσταση',
       'res.sp.path':          'Συντομότερη διαδρομή',
       'res.new.btn':          'Νέα διαδρομή',
@@ -207,7 +208,7 @@ const i18n = (() => {
       'home.step2.t':      'Select roads',
       'home.step2.d':      'Click on edges to build your route.',
       'home.step3.t':      'See Dijkstra solution',
-      'home.step3.d':      'Watch the algorithm find the optimal route step by step.',
+      'home.step3.d':      'Watch the Dijkstra algorithm find the optimal route step by step.',
 
       'auth.username':        'Username',
       'auth.email':           'Email',
@@ -272,6 +273,7 @@ const i18n = (() => {
       'res.correct':          '✓ You found the shortest route!',
       'res.wrong':            '✗ Not the shortest route. See below.',
       'res.points':           'Points earned',
+      'res.points.info':      'Points = (nodes + edges) × 100 ÷ time (sec)',
       'res.sp.weight':        'Shortest distance',
       'res.sp.path':          'Shortest route',
       'res.new.btn':          'New route',

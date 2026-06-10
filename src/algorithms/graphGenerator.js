@@ -16,6 +16,14 @@ const LOCATION_POOL = [
   'Φαλανθίδα',   'Χαλκεδώ',     'Ψαλτήρι',     'Ωκεανίδα',    'Αμφιόχη',
   'Βλαχώνα',     'Κρονίδεια',   'Δρακοχώρι',   'Νεκταρόπολη', 'Αστεροχώρι'
 ];
+const LOCATION_POOL_EN = [
+  'Alkantro',    'Voreali',     'Glaukida',    'Daidalia',    'Elysia',
+  'Zefiria',     'Iliodromos',  'Thaleria',    'Ithakara',    'Kalydona',
+  'Lavyrinthia', 'Megalida',    'Nefelia',     'Xantharia',   'Ortholythos',
+  'Pelagoni',    'Rodanthia',   'Selanaria',   'Tavrochori',  'Yperiona',
+  'Falanthida',  'Chalcedo',    'Psaltiri',    'Okeanida',    'Amfiochi',
+  'Vlachona',    'Kronideia',   'Drakochori',  'Nektaropoli', 'Asterochori'
+];
 
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -45,12 +53,13 @@ function generateGraph(n, p, minWeight = 1, maxWeight = 20) {
   n = Math.max(4, Math.min(15, n));
   p = Math.max(0.1, Math.min(0.95, p));
 
-  // Pick n unique location names from the pool
-  const locationNames = shuffle(LOCATION_POOL).slice(0, n);
+  // Pick n unique location indices from the pool (same index → both el + en match)
+  const indices = shuffle(Array.from({ length: LOCATION_POOL.length }, (_, i) => i)).slice(0, n);
 
   const nodes = Array.from({ length: n }, (_, i) => ({
     id: `v${i}`,
-    label: locationNames[i]
+    label:    LOCATION_POOL[indices[i]],
+    label_en: LOCATION_POOL_EN[indices[i]]
   }));
 
   // Track existing edges as a Set of "i-j" strings (i < j)

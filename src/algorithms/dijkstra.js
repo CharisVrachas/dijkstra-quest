@@ -13,9 +13,10 @@
  * @param {Array}  nodes
  * @param {Array}  edges
  * @param {string} sourceId
- * @param {Object} [labelMap] – optional map nodeId→displayLabel for readable step descriptions
+ * @param {Object} [labelMap]      – optional map nodeId→displayLabel for readable step descriptions
+ * @param {string} [destinationId] – if provided, algorithm stops as soon as this node is settled
  */
-function dijkstra(nodes, edges, sourceId, labelMap = {}) {
+function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null) {
   const lbl = id => labelMap[id] || id;
   const fmt = d => d === Infinity ? '∞' : `${Math.round(d * 10) / 10} km`;
   // Build adjacency list
@@ -63,6 +64,19 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}) {
     if (u === null || dist[u] === Infinity) break;  // remaining nodes unreachable
 
     visited.add(u);
+
+    // Early termination: destination has been settled — its shortest distance is final
+    if (destinationId !== null && u === destinationId) {
+      steps.push({
+        action: 'done',
+        node: u,
+        dist: { ...dist },
+        cloud: [...visited],
+        description_el: `Φτάσαμε στον προορισμό ${lbl(u)} (d = ${fmt(dist[u])}). Ο αλγόριθμος τερματίζει — η συντομότερη διαδρομή έχει βρεθεί!`,
+        description_en: `Destination ${lbl(u)} reached (d = ${fmt(dist[u])}). Algorithm terminates — shortest route found!`
+      });
+      break;
+    }
 
     steps.push({
       action: 'visit',
@@ -124,7 +138,7 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}) {
  *     AND that forms a simple path from source to destination.
  */
 function checkAnswer(nodes, edges, source, destination, selectedEdgeIds, labelMap = {}) {
-  const { dist, steps, getPath } = dijkstra(nodes, edges, source, labelMap);
+  const { dist, steps, getPath } = dijkstra(nodes, edges, source, labelMap, destination);
   const shortestPath = getPath(destination);
 
   if (!shortestPath) {

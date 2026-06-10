@@ -44,10 +44,7 @@ async function buildNav(activePage = '') {
 
   let items = '';
   if (me.loggedIn) {
-    items += link('/dashboard.html',   'nav.dashboard',   'dashboard');
-    items += link('/game.html',        'nav.play',        'play');
-    items += link('/training.html',    'nav.training',    'training');
-    items += link('/leaderboard.html', 'nav.leaderboard', 'leaderboard');
+    items += link('/dashboard.html', 'nav.dashboard', 'dashboard');
     items += `<li class="nav-item">
                 <span class="nav-link text-muted">@${me.username}</span>
               </li>`;

@@ -91,6 +91,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   await buildNav(TRAINING ? 'training' : 'play');
   i18n.apply();
 
+  // Patch toggle so graph node labels update when language changes
+  const _origToggle = i18n.toggle.bind(i18n);
+  i18n.toggle = () => { _origToggle(); updateGraphLabels(); };
+
   dijkModalEl = document.getElementById('dijkModal');
   dijkModalBS = new bootstrap.Modal(dijkModalEl);
 
@@ -260,7 +264,8 @@ function renderGraph() {
   if (cy) { cy.destroy(); cy = null; }
 
   const cyNodes = nodes.map(n => ({
-    data:    { id: n.id, label: n.label || n.id },
+    data:    { id: n.id, label_el: n.label || n.id, label_en: n.label_en || n.label || n.id,
+               label: (i18n.getLang() === 'en' && n.label_en) ? n.label_en : (n.label || n.id) },
     classes: (n.id === source ? 'source' : n.id === destination ? 'dest' : '')
   }));
 
@@ -493,7 +498,8 @@ function initDijkCy() {
     container: document.getElementById('dijkCy'),
     elements: [
       ...nodes.map(n => ({
-        data:    { id: n.id, label: n.label || n.id },
+        data:    { id: n.id, label_el: n.label || n.id, label_en: n.label_en || n.label || n.id,
+                   label: (i18n.getLang() === 'en' && n.label_en) ? n.label_en : (n.label || n.id) },
         classes: n.id === source ? 'source' : n.id === destination ? 'dest' : ''
       })),
       ...edges.map(e => ({
@@ -570,6 +576,22 @@ function rebuildPrevMap() {
   }
 }
 
+// Update node labels on all active cy instances when language is toggled
+function updateGraphLabels() {
+  if (!graphData) return;
+  const lang = i18n.getLang();
+  const relabel = (cyInst) => {
+    if (!cyInst) return;
+    cyInst.nodes().forEach(n => {
+      const el = n.data('label_el');
+      const en = n.data('label_en');
+      if (el || en) n.data('label', lang === 'en' ? (en || el) : (el || en));
+    });
+  };
+  relabel(cy);
+  relabel(dijkCy);
+}
+
 // Generic step visualiser — works on any Cytoscape instance (modal or main graph)
 function applyStepToGraph(step, targetCy, stepIdx, totalSteps, targetPath) {
   if (!targetCy || !graphData) return;
@@ -587,24 +609,26 @@ function applyStepToGraph(step, targetCy, stepIdx, totalSteps, targetPath) {
     if (node.length) { node.removeClass('source dest'); node.addClass('cloud'); }
   });
 
-  if (step.action === 'visit' && step.node) {
+  if ((step.action === 'visit' || step.action === 'done') && step.node) {
     targetCy.getElementById(step.node).removeClass('cloud source dest').addClass('current');
 
-    // Highlight candidate edges: from current node to unvisited neighbours
-    const cloudSet = new Set(cloud);
-    (edges || []).forEach(e => {
-      if ((e.source === step.node && !cloudSet.has(e.target)) ||
-          (e.target === step.node && !cloudSet.has(e.source))) {
-        targetCy.getElementById(e.id).addClass('candidate');
-      }
-    });
+    if (step.action === 'visit') {
+      // Highlight candidate edges: from current node to unvisited neighbours
+      const cloudSet = new Set(cloud);
+      (edges || []).forEach(e => {
+        if ((e.source === step.node && !cloudSet.has(e.target)) ||
+            (e.target === step.node && !cloudSet.has(e.source))) {
+          targetCy.getElementById(e.id).addClass('candidate');
+        }
+      });
+    }
   }
 
   if (step.action === 'relax' && step.edge) {
     targetCy.getElementById(step.edge).addClass('relaxed');
   }
 
-  if (stepIdx === totalSteps - 1 && targetPath) {
+  if ((stepIdx === totalSteps - 1 || step.action === 'done') && targetPath) {
     targetPath.edges.forEach(eid => {
       targetCy.getElementById(eid).removeClass('relaxed candidate').addClass('shortest');
     });

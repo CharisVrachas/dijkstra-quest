@@ -139,7 +139,7 @@ router.get('/dijkstra-steps', requireAuth, (req, res) => {
     const { nodes, edges, source, destination } = game;
     const labelMap = {};
     nodes.forEach(n => { labelMap[n.id] = n.label || n.id; });
-    const { steps, getPath } = dijkstra(nodes, edges, source, labelMap);
+    const { steps, getPath } = dijkstra(nodes, edges, source, labelMap, destination);
     const path = getPath(destination);
 
     return res.json({ steps, shortestPath: path });
