@@ -35,7 +35,7 @@ const i18n = (() => {
 
       // About section (index.html)
       'home.demo.title':   'Δες ένα παράδειγμα',
-      'home.demo.desc':    'Η μωβ διαδρομή Σύνταγμα → Μοναστηράκι → Θησείο → Ακρόπολη είναι η συντομότερη (3.1 km). Αυτό ακριβώς πρέπει να βρεις σε κάθε γύρο!',
+      'home.demo.desc':    'Η μωβ διαδρομή Ελυσία → Ζεφυρία → Θαλερία → Ωκεανίδα είναι η συντομότερη (3.1 km). Αυτό ακριβώς πρέπει να βρεις σε κάθε γύρο!',
       'home.demo.sp':      'Συντομότερη διαδρομή',
 
       'home.about.title':  'Πώς λειτουργεί το παιχνίδι;',
@@ -195,7 +195,7 @@ const i18n = (() => {
 
       // About section (index.html)
       'home.demo.title':   'See an example',
-      'home.demo.desc':    'The purple route Syntagma → Monastiraki → Thisio → Acropolis is the shortest (3.1 km). That\'s exactly what you need to find each round!',
+      'home.demo.desc':    'The purple route Elysia → Zefiria → Thaleria → Okeanida is the shortest (3.1 km). That\'s exactly what you need to find each round!',
       'home.demo.sp':      'Shortest route',
 
       'home.about.title':  'How does the game work?',

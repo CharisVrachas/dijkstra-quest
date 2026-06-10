@@ -280,7 +280,7 @@ function renderGraph() {
       padding: 80,
       fit: true,
       nodeRepulsion: () => 800000,
-      idealEdgeLength: () => 200,
+      idealEdgeLength: edge => Math.max(80, Math.min(300, 80 + (edge.data('weight') || 1) * 25)),
       edgeElasticity: () => 100,
       gravity: 0.15,
       nodeOverlap: 60,
@@ -501,7 +501,7 @@ function initDijkCy() {
       }))
     ],
     style:  CY_STYLE,
-    layout: { name: 'cose', animate: false, randomize: false, nodeRepulsion: () => 400000, idealEdgeLength: () => 100, gravity: 0.2, padding: 15 }
+    layout: { name: 'cose', animate: false, randomize: false, nodeRepulsion: () => 400000, idealEdgeLength: edge => Math.max(40, Math.min(150, 40 + (edge.data('weight') || 1) * 13)), gravity: 0.2, padding: 15 }
   });
   // Sync positions with main cy if available
   if (cy) {
