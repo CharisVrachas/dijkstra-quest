@@ -648,11 +648,14 @@ function applyStepToGraph(step, targetCy, stepIdx, totalSteps, targetPath) {
     targetCy.getElementById(step.node).removeClass('cloud source dest').addClass('current');
 
     if (step.action === 'visit') {
-      // Highlight candidate edges: from current node to unvisited neighbours
+      // Highlight only edges whose relaxation would actually improve the neighbour's distance
       const cloudSet = new Set(cloud);
+      const curDist = step.dist[step.node];
       (edges || []).forEach(e => {
-        if ((e.source === step.node && !cloudSet.has(e.target)) ||
-            (e.target === step.node && !cloudSet.has(e.source))) {
+        let neighbor = null;
+        if (e.source === step.node && !cloudSet.has(e.target)) neighbor = e.target;
+        else if (e.target === step.node && !cloudSet.has(e.source)) neighbor = e.source;
+        if (neighbor !== null && curDist + e.weight < (step.dist[neighbor] ?? Infinity)) {
           targetCy.getElementById(e.id).addClass('candidate');
         }
       });
