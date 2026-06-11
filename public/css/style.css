@@ -181,7 +181,9 @@ main { flex: 1; }
 
 @media (max-width: 768px) {
   #dijkModal .modal-body { grid-template-columns: 1fr; }
-  #dijkCy { max-height: 420px; }
+  #dijkModal .modal-body > div:first-child { order: 1; }
+  #dijkModal .modal-body > div:last-child  { order: 2; }
+  #dijkCy { max-height: none; }
 }
 
 #dijkModal .modal-body > div:first-child {
@@ -253,7 +255,7 @@ main { flex: 1; }
 @media (max-width: 576px) {
   #gameWrapper { padding: .5rem; gap: .5rem; }
   #cy { height: 480px !important; min-height: 480px !important; }
-  #dijkCy { min-height: 380px; }
+  #dijkCy { min-height: 440px; }
   #setupPanel, #hudPanel { padding: .75rem; font-size: .9rem; }
   .hud-value { font-size: 1.1rem; }
   #timerDisplay { font-size: 1.5rem; }
