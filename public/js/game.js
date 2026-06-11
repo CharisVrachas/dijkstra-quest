@@ -68,6 +68,7 @@ let timerInterval = null;
 let elapsedSec  = 0;
 let submitted   = false;
 let timerStarted = false;
+let lastResult  = null;
 
 // Dijkstra viz state
 let dijkSteps   = [];
@@ -175,6 +176,9 @@ function wireButtons() {
   if (dijkModalEl) {
     dijkModalEl.addEventListener('show.bs.modal', loadDijkSteps);
     dijkModalEl.addEventListener('hide.bs.modal', stopDijkAuto);
+    dijkModalEl.addEventListener('shown.bs.modal', () => {
+      if (dijkCy) { dijkCy.resize(); dijkCy.fit(undefined, 20); }
+    });
   }
 }
 
@@ -378,6 +382,7 @@ async function handleSubmit() {
 // ── Show result ───────────────────────────────────────────────────────────────
 
 function showResult(res) {
+  lastResult = res;
   const panel = document.getElementById('resultPanel');
   const msg   = document.getElementById('resultMsg');
 
@@ -594,6 +599,32 @@ function updateGraphLabels() {
   };
   relabel(cy);
   relabel(dijkCy);
+
+  // HUD badges
+  const srcBadge = document.getElementById('srcBadge');
+  const dstBadge = document.getElementById('dstBadge');
+  if (srcBadge && graphData.source) srcBadge.textContent = labelOf(graphData.source);
+  if (dstBadge && graphData.destination) dstBadge.textContent = labelOf(graphData.destination);
+
+  // Selected edge list
+  updateWeightSumDisplay();
+
+  // Result panel: shortest path node list
+  if (submitted && lastResult && lastResult.shortestPath && lastResult.shortestPath.nodes) {
+    const spNodesEl = document.getElementById('spNodes');
+    if (spNodesEl) {
+      spNodesEl.innerHTML = lastResult.shortestPath.nodes
+        .map((n, i, a) => `<span class="badge bg-secondary">${labelOf(n)}</span>${i < a.length - 1 ? ' → ' : ''}`)
+        .join('');
+    }
+  }
+
+  // Distance table (if Dijkstra modal has been stepped into)
+  if (dijkIndex >= 0 && dijkSteps.length > 0) {
+    rebuildPrevMap();
+    const step = dijkSteps[dijkIndex];
+    renderDistTable(step.dist, dijkPrev, step.node || step.to);
+  }
 }
 
 // Generic step visualiser — works on any Cytoscape instance (modal or main graph)
@@ -804,11 +835,12 @@ function showLoading(show) {
   }
 }
 
-// Returns the display label (city name) for a node ID
+// Returns the display label (city name) for a node ID, language-aware
 function labelOf(nodeId) {
   if (!graphData || !graphData.nodes) return nodeId;
   const n = graphData.nodes.find(nd => nd.id === nodeId);
-  return n ? (n.label || nodeId) : nodeId;
+  if (!n) return nodeId;
+  return (i18n.getLang() === 'en' && n.label_en) ? n.label_en : (n.label || nodeId);
 }
 
 function escHtml(s) {
