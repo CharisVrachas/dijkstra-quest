@@ -180,9 +180,13 @@ main { flex: 1; }
 }
 
 @media (max-width: 768px) {
-  #dijkModal .modal-body { grid-template-columns: 1fr; }
-  #dijkModal .modal-body > div:first-child { order: 1; }
-  #dijkModal .modal-body > div:last-child  { order: 2; }
+  #dijkModal .modal-body {
+    display: flex;
+    flex-direction: column;
+  }
+  #dijkModal .modal-body > div:first-child {
+    min-height: auto;
+  }
   #dijkCy { max-height: none; }
 }
 
