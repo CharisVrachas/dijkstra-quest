@@ -179,17 +179,6 @@ main { flex: 1; }
   align-items: stretch;
 }
 
-@media (max-width: 768px) {
-  #dijkModal .modal-body {
-    display: flex;
-    flex-direction: column;
-  }
-  #dijkModal .modal-body > div:first-child {
-    min-height: auto;
-  }
-  #dijkCy { max-height: none; }
-}
-
 #dijkModal .modal-body > div:first-child {
   display: flex;
   flex-direction: column;
@@ -202,6 +191,19 @@ main { flex: 1; }
   min-height: 340px;
   border-radius: .5rem;
   background: #f8f9fa;
+}
+
+/* Mobile override must come AFTER the rules above so it wins the cascade
+   (equal specificity selectors: later source order wins, media query or not) */
+@media (max-width: 768px) {
+  #dijkModal .modal-body {
+    display: flex;
+    flex-direction: column;
+  }
+  #dijkModal .modal-body > div:first-child {
+    min-height: auto;
+  }
+  #dijkCy { max-height: none; }
 }
 
 #distTable th, #distTable td {
