@@ -87,8 +87,9 @@ router.post('/submit', requireAuth, (req, res) => {
     const { nodes, edges, source, destination, difficulty, training } = game;
 
     const labelMap = {};
-    nodes.forEach(n => { labelMap[n.id] = n.label || n.id; });
-    const result = checkAnswer(nodes, edges, source, destination, selectedEdges || [], labelMap);
+    const labelMapEn = {};
+    nodes.forEach(n => { labelMap[n.id] = n.label || n.id; labelMapEn[n.id] = n.label_en || n.label || n.id; });
+    const result = checkAnswer(nodes, edges, source, destination, selectedEdges || [], labelMap, labelMapEn);
 
     let points = 0;
     if (result.correct && !training) {
@@ -138,8 +139,9 @@ router.get('/dijkstra-steps', requireAuth, (req, res) => {
 
     const { nodes, edges, source, destination } = game;
     const labelMap = {};
-    nodes.forEach(n => { labelMap[n.id] = n.label || n.id; });
-    const { steps, getPath } = dijkstra(nodes, edges, source, labelMap, destination);
+    const labelMapEn = {};
+    nodes.forEach(n => { labelMap[n.id] = n.label || n.id; labelMapEn[n.id] = n.label_en || n.label || n.id; });
+    const { steps, getPath } = dijkstra(nodes, edges, source, labelMap, destination, labelMapEn);
     const path = getPath(destination);
 
     return res.json({ steps, shortestPath: path });

@@ -16,8 +16,9 @@
  * @param {Object} [labelMap]      – optional map nodeId→displayLabel for readable step descriptions
  * @param {string} [destinationId] – if provided, algorithm stops as soon as this node is settled
  */
-function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null) {
-  const lbl = id => labelMap[id] || id;
+function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null, labelMapEn = null) {
+  const lbl   = id => labelMap[id] || id;
+  const lblEn = id => (labelMapEn && labelMapEn[id]) ? labelMapEn[id] : lbl(id);
   const fmt = d => d === Infinity ? '∞' : `${Math.round(d * 10) / 10} km`;
   // Build adjacency list
   const adj = {};
@@ -47,7 +48,7 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null) {
     dist: { ...dist },
     cloud: [],
     description_el: `Έναρξη: η αφετηρία ${lbl(sourceId)} έχει απόσταση 0 km. Όλες οι υπόλοιπες τοποθεσίες ξεκινούν με απόσταση ∞.`,
-    description_en: `Start: source ${lbl(sourceId)} has distance 0 km. All other locations start at ∞.`
+    description_en: `Start: source ${lblEn(sourceId)} has distance 0 km. All other locations start at ∞.`
   });
 
   while (visited.size < nodes.length) {
@@ -73,7 +74,7 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null) {
         dist: { ...dist },
         cloud: [...visited],
         description_el: `Φτάσαμε στον προορισμό ${lbl(u)} (d = ${fmt(dist[u])}). Ο αλγόριθμος τερματίζει — η συντομότερη διαδρομή έχει βρεθεί!`,
-        description_en: `Destination ${lbl(u)} reached (d = ${fmt(dist[u])}). Algorithm terminates — shortest route found!`
+        description_en: `Destination ${lblEn(u)} reached (d = ${fmt(dist[u])}). Algorithm terminates — shortest route found!`
       });
       break;
     }
@@ -84,7 +85,7 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null) {
       dist: { ...dist },
       cloud: [...visited],
       description_el: `Επεξεργαζόμαστε: ${lbl(u)} (d = ${fmt(dist[u])}). Ελέγχουμε όλους τους γειτονικούς δρόμους.`,
-      description_en: `Processing: ${lbl(u)} (d = ${fmt(dist[u])}). Checking all neighbouring roads.`
+      description_en: `Processing: ${lblEn(u)} (d = ${fmt(dist[u])}). Checking all neighbouring roads.`
     });
 
     // Relax neighbours
@@ -106,7 +107,7 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null) {
           dist: { ...dist },
           cloud: [...visited],
           description_el: `Βρέθηκε καλύτερη διαδρομή προς ${lbl(v)} μέσω ${lbl(u)}: ${fmt(newDist)} (ήταν ${fmt(oldDist)})`,
-          description_en: `Better route to ${lbl(v)} via ${lbl(u)}: ${fmt(newDist)} (was ${fmt(oldDist)})`
+          description_en: `Better route to ${lblEn(v)} via ${lblEn(u)}: ${fmt(newDist)} (was ${fmt(oldDist)})`
         });
       }
     });
@@ -137,8 +138,8 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null) {
  *   — accepts any edge set whose total weight equals the Dijkstra distance
  *     AND that forms a simple path from source to destination.
  */
-function checkAnswer(nodes, edges, source, destination, selectedEdgeIds, labelMap = {}) {
-  const { dist, steps, getPath } = dijkstra(nodes, edges, source, labelMap, destination);
+function checkAnswer(nodes, edges, source, destination, selectedEdgeIds, labelMap = {}, labelMapEn = null) {
+  const { dist, steps, getPath } = dijkstra(nodes, edges, source, labelMap, destination, labelMapEn);
   const shortestPath = getPath(destination);
 
   if (!shortestPath) {
