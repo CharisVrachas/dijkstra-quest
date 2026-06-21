@@ -54,6 +54,7 @@
     const MEDAL = ['🥇','🥈','🥉'];
 
     document.addEventListener('DOMContentLoaded', async () => {
+      await requireLogin();
       await buildNav('leaderboard');
       i18n.apply();
 

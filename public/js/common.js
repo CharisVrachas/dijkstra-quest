@@ -36,15 +36,8 @@ async function buildNav(activePage = '') {
   const nav = document.getElementById('mainNav');
   if (!nav) return;
 
-  const link = (href, key, page) =>
-    `<li class="nav-item">
-       <a class="nav-link${activePage === page ? ' active' : ''}"
-          href="${href}" data-i18n="${key}"></a>
-     </li>`;
-
   let items = '';
   if (me.loggedIn) {
-    items += link('/dashboard.html', 'nav.dashboard', 'dashboard');
     items += `<li class="nav-item">
                 <span class="nav-link text-muted">@${me.username}</span>
               </li>`;
@@ -53,8 +46,6 @@ async function buildNav(activePage = '') {
                         onclick="logout()" data-i18n="nav.logout"></button>
               </li>`;
   } else {
-    items += link('/index.html',       'nav.dashboard',   'home');
-    items += link('/leaderboard.html', 'nav.leaderboard', 'leaderboard');
     items += `<li class="nav-item">
                 <a class="btn btn-sm btn-outline-primary ms-2 my-1"
                    href="/login.html" data-i18n="nav.login"></a>
@@ -72,9 +63,12 @@ async function buildNav(activePage = '') {
                       onclick="i18n.toggle()"></button>
             </li>`;
 
+  // Logo links to dashboard when logged in, landing page when not
+  const logoHref = me.loggedIn ? '/dashboard.html' : '/index.html';
+
   nav.innerHTML = `
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold text-primary" href="/index.html"
+      <a class="navbar-brand fw-bold text-primary" href="${logoHref}"
          data-i18n="nav.title">Dijkstra Quest</a>
       <button class="navbar-toggler" type="button"
               data-bs-toggle="collapse" data-bs-target="#navMenu">

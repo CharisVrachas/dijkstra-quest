@@ -18,8 +18,10 @@
         <h1 class="mb-3" data-i18n="home.hero.title">Dijkstra Quest</h1>
         <p class="lead mb-2" data-i18n="home.hero.sub"></p>
         <p class="mb-4" data-i18n="home.hero.desc"></p>
-        <a href="/login.html"    class="btn btn-light btn-lg me-2 mb-2" data-i18n="home.cta.play"></a>
-        <a href="#features"      class="btn btn-outline-light btn-lg mb-2" data-i18n="home.cta.learn"></a>
+        <div class="d-flex flex-wrap justify-content-center gap-2 mt-2">
+          <a href="/login.html" class="btn btn-light btn-lg" data-i18n="home.cta.play"></a>
+          <a href="#features"   class="btn btn-outline-light btn-lg" data-i18n="home.cta.learn"></a>
+        </div>
       </div>
     </section>
 
@@ -138,7 +140,7 @@
     });
 
     function initDemoGraph() {
-      cytoscape({
+      const demoCy = cytoscape({
         container: document.getElementById('democy'),
         elements: [
           { data: { id: 's', label: 'Ελυσία'    }, position: { x: 260, y:  55 }, classes: 'source' },
@@ -181,6 +183,9 @@
         autoungrabify: true,
         autounselectify: true
       });
+      // Ensure graph fills container on all screen sizes
+      requestAnimationFrame(() => { demoCy.resize(); demoCy.fit(undefined, 45); });
+      window.addEventListener('resize', () => { demoCy.resize(); demoCy.fit(undefined, 45); });
     }
   </script>
 </body>

@@ -719,11 +719,9 @@ function startDijkAuto() {
   document.getElementById('dijkAutoBtn').classList.add('d-none');
   document.getElementById('dijkStopBtn').classList.remove('d-none');
   dijkAutoInterval = setInterval(() => {
-    if (dijkIndex >= dijkSteps.length - 1) {
-      stopDijkAuto();
-      return;
-    }
+    if (dijkIndex >= dijkSteps.length - 1) { stopDijkAuto(); return; }
     dijkStep(1);
+    if (dijkSteps[dijkIndex] && dijkSteps[dijkIndex].action === 'done') { stopDijkAuto(); }
   }, 900);
 }
 
@@ -750,6 +748,9 @@ async function startGuideMode() {
   dijkSteps  = res.steps  || [];
   dijkPath   = res.shortestPath || null;
   guideIndex = -1;
+
+  // Clear player's selected edges so they don't clash with guide visualization
+  if (cy) cy.edges().removeClass('selected');
 
   document.getElementById('guideTotal').textContent = dijkSteps.length;
   document.getElementById('guideCur').textContent   = 0;
@@ -812,6 +813,7 @@ function startGuideAuto() {
   guideAutoInterval = setInterval(() => {
     if (guideIndex >= dijkSteps.length - 1) { stopGuideAuto(); return; }
     guideStep(1);
+    if (dijkSteps[guideIndex] && dijkSteps[guideIndex].action === 'done') { stopGuideAuto(); }
   }, 900);
 }
 

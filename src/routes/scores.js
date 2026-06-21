@@ -2,9 +2,14 @@ const express = require('express');
 const router  = express.Router();
 const db      = require('../db/database');
 
+function requireAuth(req, res, next) {
+  if (!req.session.userId) return res.status(401).json({ error: 'Login required.' });
+  next();
+}
+
 // ── GET /api/scores/leaderboard ───────────────────────────────────────────────
-// Top-10 players by total points
-router.get('/leaderboard', (_req, res) => {
+// Top-10 players by total points — requires login
+router.get('/leaderboard', requireAuth, (req, res) => {
   const rows = db.prepare(`
     SELECT
       username,
