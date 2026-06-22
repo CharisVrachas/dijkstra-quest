@@ -100,9 +100,9 @@ function generateGraph(n, p, minWeight = 1, maxWeight = 20) {
 }
 
 const DIFFICULTY_PRESETS = {
-  beginner: { n: 6,  p: 0.55, minWeight: 0.5, maxWeight: 3.0 },
-  normal:   { n: 9,  p: 0.50, minWeight: 0.5, maxWeight: 5.0 },
-  advanced: { n: 12, p: 0.45, minWeight: 0.3, maxWeight: 7.0 }
+  beginner: { n: 6,  p: 0.40, minWeight: 0.5, maxWeight: 3.0 },
+  normal:   { n: 7,  p: 0.35, minWeight: 0.5, maxWeight: 5.0 },
+  advanced: { n: 9,  p: 0.30, minWeight: 0.3, maxWeight: 7.0 }
 };
 
 function getDifficultyParams(difficulty) {

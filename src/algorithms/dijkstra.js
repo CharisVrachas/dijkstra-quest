@@ -47,8 +47,8 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null, l
     source: sourceId,
     dist: { ...dist },
     cloud: [],
-    description_el: `Έναρξη: η αφετηρία ${lbl(sourceId)} έχει απόσταση 0 km. Όλες οι υπόλοιπες τοποθεσίες ξεκινούν με απόσταση ∞.`,
-    description_en: `Start: source ${lblEn(sourceId)} has distance 0 km. All other locations start at ∞.`
+    description_el: `Αρχικοποίηση: Θέτουμε απόσταση αφετηρίας ${lbl(sourceId)} = 0 km. Όλες οι υπόλοιπες τοποθεσίες ξεκινούν με άγνωστη απόσταση (∞). Θα επιλέγουμε πάντα την αδρανή τοποθεσία με τη μικρότερη γνωστή απόσταση.`,
+    description_en: `Initialisation: source ${lblEn(sourceId)} = 0 km. All other locations start at unknown distance (∞). At each step we pick the unvisited location with the smallest known distance.`
   });
 
   while (visited.size < nodes.length) {
@@ -73,19 +73,24 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null, l
         node: u,
         dist: { ...dist },
         cloud: [...visited],
-        description_el: `Φτάσαμε στον προορισμό ${lbl(u)} (d = ${fmt(dist[u])}). Ο αλγόριθμος τερματίζει — η συντομότερη διαδρομή έχει βρεθεί!`,
-        description_en: `Destination ${lblEn(u)} reached (d = ${fmt(dist[u])}). Algorithm terminates — shortest route found!`
+        description_el: `✓ Τερματισμός! Ο προορισμός ${lbl(u)} (d = ${fmt(dist[u])}) είναι πλέον η πλησιέστερη αδρανής τοποθεσία — καμία άλλη διαδρομή δεν μπορεί να είναι συντομότερη. Η απόστασή του είναι οριστική!`,
+        description_en: `✓ Done! Destination ${lblEn(u)} (d = ${fmt(dist[u])}) is now the closest unvisited location — no other route can be shorter. Distance is final!`
       });
       break;
     }
 
+    const isSource = u === sourceId;
     steps.push({
       action: 'visit',
       node: u,
       dist: { ...dist },
       cloud: [...visited],
-      description_el: `Επεξεργαζόμαστε: ${lbl(u)} (d = ${fmt(dist[u])}). Ελέγχουμε όλους τους γειτονικούς δρόμους.`,
-      description_en: `Processing: ${lblEn(u)} (d = ${fmt(dist[u])}). Checking all neighbouring roads.`
+      description_el: isSource
+        ? `Ξεκινάμε από την αφετηρία ${lbl(u)} (d = 0 km). Ελέγχουμε όλους τους γειτονικούς δρόμους για να ενημερώσουμε τις αποστάσεις τους.`
+        : `Επεξεργαζόμαστε: ${lbl(u)} (d = ${fmt(dist[u])}) — η πλησιέστερη αδρανής τοποθεσία, η απόστασή της είναι τώρα οριστική. Ελέγχουμε γειτονικούς δρόμους.`,
+      description_en: isSource
+        ? `Starting from source ${lblEn(u)} (d = 0 km). Checking all neighbouring roads to update their distances.`
+        : `Processing: ${lblEn(u)} (d = ${fmt(dist[u])}) — closest unvisited location, its distance is now final. Checking neighbouring roads.`
     });
 
     // Relax neighbours
@@ -98,6 +103,7 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null, l
         prev[v]     = u;
         prevEdge[v] = edgeId;
 
+        const isDest = v === destinationId;
         steps.push({
           action: 'relax',
           edge: edgeId,
@@ -106,8 +112,12 @@ function dijkstra(nodes, edges, sourceId, labelMap = {}, destinationId = null, l
           newDist,
           dist: { ...dist },
           cloud: [...visited],
-          description_el: `Βρέθηκε καλύτερη διαδρομή προς ${lbl(v)} μέσω ${lbl(u)}: ${fmt(newDist)} (ήταν ${fmt(oldDist)})`,
-          description_en: `Better route to ${lblEn(v)} via ${lblEn(u)}: ${fmt(newDist)} (was ${fmt(oldDist)})`
+          description_el: isDest
+            ? `⚑ Βρέθηκε διαδρομή προς τον προορισμό ${lbl(v)} μέσω ${lbl(u)}: ${fmt(newDist)} (ήταν ${fmt(oldDist)}). Ο αλγόριθμος συνεχίζει — ίσως υπάρχει ακόμα συντομότερη!`
+            : `Βελτίωση! Νέα απόσταση για ${lbl(v)} μέσω ${lbl(u)}: ${fmt(newDist)} (ήταν ${fmt(oldDist)})`,
+          description_en: isDest
+            ? `⚑ Route found to destination ${lblEn(v)} via ${lblEn(u)}: ${fmt(newDist)} (was ${fmt(oldDist)}). Algorithm continues — there may still be a shorter route!`
+            : `Improvement! New distance for ${lblEn(v)} via ${lblEn(u)}: ${fmt(newDist)} (was ${fmt(oldDist)})`
         });
       }
     });

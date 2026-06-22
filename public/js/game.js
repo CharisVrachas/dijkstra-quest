@@ -492,7 +492,9 @@ async function loadDijkSteps() {
   document.getElementById('stepTotal').textContent = dijkSteps.length;
   document.getElementById('stepCur').textContent   = 0;
   document.getElementById('stepProgress').style.width = '0%';
-  document.getElementById('stepDesc').textContent  = '—';
+  const sdInit = document.getElementById('stepDesc');
+  sdInit.textContent = '—';
+  sdInit.className   = 'alert alert-secondary py-2 mb-3';
 
   initDijkCy();
   renderDistTable(null, {});
@@ -540,7 +542,9 @@ function dijkStep(direction = 1) {
       n.addClass(n.id() === src ? 'source' : n.id() === dst ? 'dest' : '');
     });
     dijkCy && dijkCy.edges().removeClass('selected shortest relaxed candidate');
-    document.getElementById('stepDesc').textContent  = '—';
+    const stepDescReset = document.getElementById('stepDesc');
+    stepDescReset.textContent = '—';
+    stepDescReset.className   = 'alert alert-secondary py-2 mb-3';
     document.getElementById('stepCur').textContent   = 0;
     document.getElementById('stepProgress').style.width = '0%';
     renderDistTable(null, {});
@@ -554,9 +558,15 @@ function dijkStep(direction = 1) {
   document.getElementById('stepProgress').style.width =
     `${Math.round(((dijkIndex + 1) / dijkSteps.length) * 100)}%`;
 
-  // Description
-  document.getElementById('stepDesc').textContent =
-    i18n.getLang() === 'el' ? step.description_el : step.description_en;
+  // Description with dynamic alert colour
+  const stepDescEl = document.getElementById('stepDesc');
+  stepDescEl.textContent = i18n.getLang() === 'el' ? step.description_el : step.description_en;
+  const _sd = graphData.source, _dd = graphData.destination;
+  stepDescEl.className = 'alert py-2 mb-3 ' + (
+    step.action === 'done'                           ? 'alert-success' :
+    step.action === 'relax' && step.to   === _dd     ? 'alert-warning' :
+    step.action === 'visit' && step.node === _sd     ? 'alert-info'    :
+                                                       'alert-secondary');
 
   // Update dijkPrev from step dist data (rebuild for backward nav)
   // We rebuild prev map by replaying steps 0..dijkIndex
@@ -755,7 +765,9 @@ async function startGuideMode() {
   document.getElementById('guideTotal').textContent = dijkSteps.length;
   document.getElementById('guideCur').textContent   = 0;
   document.getElementById('guideProgress').style.width = '0%';
-  document.getElementById('guideDesc').textContent  = '—';
+  const guideDescInit = document.getElementById('guideDesc');
+  guideDescInit.textContent = '—';
+  guideDescInit.className   = 'alert alert-light border py-2 mb-2 small';
   i18n.apply();
 
   guidePanel.classList.remove('d-none');
@@ -772,14 +784,22 @@ function guideStep(dir = 1) {
     guideIndex < 0 ? '0%' : `${Math.round(((guideIndex + 1) / dijkSteps.length) * 100)}%`;
 
   if (guideIndex < 0) {
-    document.getElementById('guideDesc').textContent = '—';
+    const guideDescReset = document.getElementById('guideDesc');
+    guideDescReset.textContent = '—';
+    guideDescReset.className   = 'alert alert-light border py-2 mb-2 small';
     resetGuideColors();
     return;
   }
 
   const step = dijkSteps[guideIndex];
-  document.getElementById('guideDesc').textContent =
-    i18n.getLang() === 'el' ? step.description_el : step.description_en;
+  const guideDescEl = document.getElementById('guideDesc');
+  guideDescEl.textContent = i18n.getLang() === 'el' ? step.description_el : step.description_en;
+  const _gs = graphData.source, _gd = graphData.destination;
+  guideDescEl.className = 'alert py-2 mb-2 small ' + (
+    step.action === 'done'                           ? 'alert-success border-0' :
+    step.action === 'relax' && step.to   === _gd     ? 'alert-warning border-0' :
+    step.action === 'visit' && step.node === _gs     ? 'alert-info border-0'    :
+                                                       'alert-light border');
 
   applyStepToGraph(step, cy, guideIndex, dijkSteps.length, dijkPath);
 }
